@@ -1,0 +1,31 @@
+name: Zip and Deploy to GitHub Pages
+
+on:
+  push:
+    branches:
+      - main  # Trigger the workflow on push to main branch
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      - name: Install zip
+        run: sudo apt-get install zip
+
+      - name: Zip folders and move to gh-pages branch
+        run: |
+          mkdir zipped-templates
+          for dir in templates/*; do
+            if [ -d "$dir" ]; then
+              zip -r "zipped-templates/$(basename $dir).zip" "$dir"
+            fi
+          done
+
+      - name: Deploy to GitHub Pages
+        uses: JamesIves/github-pages-deploy-action@4.1.5
+        with:
+          branch: gh-pages
+          folder: zipped-templates
