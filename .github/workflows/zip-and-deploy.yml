@@ -18,17 +18,13 @@ jobs:
       - name: Zip folders and move to gh-pages branch
         run: |
           mkdir zipped-templates
-          for dir in templates/*; do
+          cd templates
+          for dir in *; do
             if [ -d "$dir" ]; then
-              cd "$dir"
-              for subdir in *; do
-                if [ -d "$subdir" ]; then
-                  zip -r "../zipped-templates/$subdir.zip" "$subdir"
-                fi
-              done
-              cd ../..
+              zip -r "../zipped-templates/$dir.zip" "$dir"
             fi
           done
+          cd ..
 
       - name: Deploy to GitHub Pages
         uses: JamesIves/github-pages-deploy-action@4.1.5
