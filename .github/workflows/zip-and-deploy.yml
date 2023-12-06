@@ -20,7 +20,13 @@ jobs:
           mkdir zipped-templates
           for dir in templates/*; do
             if [ -d "$dir" ]; then
-              zip -r "zipped-templates/$(basename $dir).zip" "$dir"
+              cd "$dir"
+              for subdir in *; do
+                if [ -d "$subdir" ]; then
+                  zip -r "../zipped-templates/$subdir.zip" "$subdir"
+                fi
+              done
+              cd ../..
             fi
           done
 
