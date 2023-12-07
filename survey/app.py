@@ -19,13 +19,12 @@ def make_likart(id: str, movie: str) -> Tag:
     )
 
 
-def make_section(question_dict: Dict, section: str):
-    return (
-        ui.accordion_panel(
-            section,
-            question_dict[section]["elements"],
-        ),
+def make_section(section: str, question_dict: Dict):
+    out = ui.accordion_panel(
+        section,
+        question_dict[section]["elements"],
     )
+    return out
 
 
 movies = ["The Avengers", "Spotlight", "The Big Short", "The Phantom Thread"]
@@ -35,11 +34,14 @@ questions = {
     "Demographics": {
         "ids": ["name", "country"],
         "elements": [
-            ui.input_text("name", "Enter your name"),
-            ui.input_select(
-                "country",
-                "Country",
-                choices=["USA", "Canada", "Portugal"],
+            ui.tooltip(ui.input_text("name", "Enter your name"), "Enter your name"),
+            ui.tooltip(
+                ui.input_select(
+                    "country",
+                    "Country",
+                    choices=["USA", "Canada", "Portugal"],
+                ),
+                "Your primary residence",
             ),
             ui.input_numeric("age", "Age", value=0),
         ],
@@ -57,18 +59,14 @@ questions = {
 
 app_ui = ui.page_fluid(
     ui.panel_title("Movie survey"),
-    ui.accordion(
-        make_section(questions, "Demographics"),
-        ui.accordion_panel(
-            "Income",
-            questions["Income"]["elements"],
-        ),
-        ui.accordion_panel(
-            "Ratings",
-            questions["Ratings"]["elements"],
+    ui.card(
+        ui.accordion(
+            *[make_section(key, questions) for key in questions.keys()],
         ),
     ),
-    ui.input_action_button("save_button", "Submit"),
+    ui.card(
+        ui.input_action_button("save_button", "Submit"),
+    ),
 )
 
 
