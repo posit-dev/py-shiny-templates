@@ -2,7 +2,7 @@ from shiny import Inputs, Outputs, Session, module, reactive, render, ui
 from typing import Callable
 
 # ============================================================
-# Module: Page 1
+# Module: Demographics
 # ============================================================
 
 
@@ -42,7 +42,7 @@ def demo_server(
 
 
 # ============================================================
-# Module: Page 2
+# Module: Contraindications
 # ============================================================
 
 
@@ -96,7 +96,7 @@ def contra_server(
 
 
 # ============================================================
-# Module: Page 4
+# Module: Consent
 # ============================================================
 
 

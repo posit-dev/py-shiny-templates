@@ -22,10 +22,17 @@ app_ui = ui.page_navbar(
     [mod(id, title) for mod, id, title in zip(uis, ids, titles)],
     sidebar=ui.sidebar(
         ui.layout_columns(
-            ui.input_action_button("next", "Next", width="100%"),
-            ui.input_action_button("back", "Back", width="100%"),
+            ui.input_action_button(
+                "back",
+                "Back",
+                width="100%",
+            ),
+            ui.input_action_button(
+                "next", "Next", width="100%", class_="btn bg-primary"
+            ),
         ),
         ui.output_ui("submit_ui"),
+        open="always",
     ),
     id="tabs",
 )
@@ -40,7 +47,7 @@ def server(input: Inputs, output: Outputs, session: Session):
     )
     ui.modal_show(m)
 
-    @reactive.Effect
+    @reactive.effect
     @reactive.event(input.next)
     def next_tab():
         if input.tabs() != "Consent":
@@ -48,7 +55,7 @@ def server(input: Inputs, output: Outputs, session: Session):
             next_title = titles[next_title_index]
             ui.update_navs("tabs", selected=next_title)
 
-    @reactive.Effect
+    @reactive.effect
     @reactive.event(input.back)
     def previous():
         if input.tabs() != "Demographics":
@@ -63,9 +70,14 @@ def server(input: Inputs, output: Outputs, session: Session):
     @render.ui
     def submit_ui():
         if consent():
-            return ui.input_action_button("submit", "Submit", width="100%")
+            return ui.input_action_button(
+                "submit",
+                "Submit",
+                width="100%",
+                class_="btn bg-secondary",
+            )
 
-    @reactive.Effect
+    @reactive.effect
     @reactive.event(input.submit)
     def write_response():
         out = {"id": str(uuid.uuid4())}
