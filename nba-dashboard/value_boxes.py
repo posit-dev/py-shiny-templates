@@ -14,7 +14,7 @@ def stat_box_ui(stat):
         title=stat,
         value=ui.output_text("season_average"),
         showcase=sw.output_widget("sparkline"),
-        theme="bg-gradient-blue-indigo",
+        theme="bg-gradient-red-indigo",
         showcase_layout=ui.showcase_bottom(width="80%", height="50%"),
     )
 

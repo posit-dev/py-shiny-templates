@@ -32,21 +32,21 @@ def get_player_stats(player_name):
     return df
 
 
-def plot_fga_vs_fgm(game_log_df):
-    fig = px.scatter(
-        game_log_df,
-        x="fga",
-        y="fgm",
-        labels={"fga": "Field goals attempted", "fgm": "Field goals made"},
+def plot_scorigami(player, df, var1="ast", var2="tov"):
+    fig = px.density_heatmap(
+        df, x="ast", y="tov", color_continuous_scale="reds", nbinsx=5, nbinsy=5
     )
-    return fig
-
-
-def plot_rebounds(game_log_df):
-    fig = px.scatter(
-        game_log_df,
-        x="oreb",
-        y="dreb",
-        labels={"dreb": "Defensive rebounds", "oreb": "Offensive rebounds"},
+    fig.update_layout(
+        xaxis_title=var1,
+        yaxis_title=var2,
+        xaxis_showgrid=False,
+        yaxis_showgrid=False,
+        xaxis_zeroline=False,
+        yaxis_zeroline=False,
+        xaxis_showticklabels=True,
+        yaxis_showticklabels=True,
+        plot_bgcolor="white",
+        paper_bgcolor="white",
+        showlegend=False,
     )
     return fig
