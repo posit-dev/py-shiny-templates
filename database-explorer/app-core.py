@@ -2,7 +2,6 @@ import urllib.request
 from pathlib import Path
 
 import duckdb
-import shinyswatch.theme as theme
 from query import query_output_server, query_output_ui
 
 from shiny import App, reactive, ui
@@ -30,38 +29,24 @@ con = duckdb.connect(str(db_file), read_only=True)
 
 button_style = {"style": "margin: 15px"}
 
-app_ui = ui.page_fluid(
-    theme.flatly(),
-    ui.panel_title("DuckDB query explorer"),
-    ui.row(
-        ui.column(
-            2,
-            ui.row(
-                button_style,
-                ui.input_action_button("add_query", "Add Query"),
-            ),
-            ui.row(
-                button_style,
-                ui.input_action_button("show_meta", "Show Metadata"),
-            ),
-            ui.br(),
-            ui.row(
-                ui.markdown(
-                    """
+app_ui = ui.page_sidebar(
+    # ui.panel_title("DuckDB query explorer"),
+    ui.sidebar(
+        ui.input_action_button("add_query", "Add Query", class_="btn btn-primary"),
+        ui.input_action_button(
+            "show_meta", "Show Metadata", class_="btn btn-secondary"
+        ),
+        ui.markdown(
+            """
                     This app lets you explore a dataset using SQL and duckdb.
                     The data is stored in an on-disk [duckdb](https://duckdb.org/) database,
                     which leads to extremely fast queries.
                     """
-                ),
-            ),
         ),
-        ui.column(
-            10,
-            ui.tags.div(
-                query_output_ui("initial_query", remove_id="initial_query"),
-                id="module_container",
-            ),
-        ),
+    ),
+    ui.tags.div(
+        query_output_ui("initial_query", remove_id="initial_query"),
+        id="module_container",
     ),
 )
 

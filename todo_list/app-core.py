@@ -1,28 +1,26 @@
-import shinyswatch
 from htmltools import css
 
 from shiny import App, module, reactive, render, ui
 
-app_ui = ui.page_fixed(
-    {"class": "my-5"},
-    shinyswatch.theme.minty(),
-    ui.panel_title("Shiny TodoMVC"),
-    ui.layout_sidebar(
-        ui.panel_sidebar(
-            ui.input_text("todo_input_text", "", placeholder="Todo text"),
-            ui.input_action_button("add", "Add to-do"),
-        ),
-        ui.panel_main(
-            ui.output_text("cleared_tasks"),
-            ui.div(id="tasks", style="margin-top: 0.5em"),
-        ),
+app_ui = ui.page_sidebar(
+    ui.sidebar(
+        ui.input_text("todo_input_text", "", placeholder="Todo text"),
+        ui.input_action_button("add", "Add to-do", class_="btn btn-primary"),
     ),
+    ui.output_text("cleared_tasks"),
+    ui.div(id="tasks"),
+    title="Shiny TodoMVC",
 )
 
 
 def server(input, output, session):
     finished_tasks = reactive.Value(0)
     task_counter = reactive.Value(0)
+
+    # Passing an iterate counter callback down to the module is a simple way
+    # to manipulate application state from inside of a module
+    def iterate_counter():
+        finished_tasks.set(finished_tasks.get() + 1)
 
     @render.text
     def cleared_tasks():
@@ -40,17 +38,7 @@ def server(input, output, session):
             ui=task_ui(id),
         )
 
-        finish = task_server(id, text=input.todo_input_text())
-
-        # Defining a nested reactive effect like this might feel a bit funny but it's the
-        # correct pattern in this case. We are reacting to the `finish`
-        # event within the `add` closure, so nesting the reactive effects
-        # means that we don't have to worry about conflicting with
-        # finish events from other task elements.
-        @reactive.Effect
-        @reactive.event(finish)
-        def iterate_counter():
-            finished_tasks.set(finished_tasks.get() + 1)
+        task_server(id, text=input.todo_input_text(), on_finish=iterate_counter)
 
         ui.update_text("todo_input_text", value="")
 
@@ -64,28 +52,33 @@ def task_ui():
 
 
 @module.server
-def task_server(input, output, session, text):
+def task_server(input, output, session, text, on_finish):
     finished = reactive.Value(False)
 
     @render.ui
     def button_row():
         button = None
         if finished():
-            button = ui.input_action_button("clear", "Clear", class_="btn-warning")
+            button = ui.input_action_button("clear", "Clear", class_="btn btn-warning")
         else:
-            button = ui.input_action_button("finish", "Finish", class_="btn-default")
+            button = ui.input_action_button(
+                "finish", "Finish", class_="btn btn-primary"
+            )
 
-        return ui.row(
+        return ui.layout_columns(
             ui.column(4, button),
             ui.column(8, text),
             class_="mt-3 p-3 border align-items-center",
             style=css(text_decoration="line-through" if finished() else None),
+            col_widths=[2, 10],
         )
 
     @reactive.Effect
     @reactive.event(input.finish)
     def finish_task():
         finished.set(True)
+        # We call the on_finish function to increment the finished tasks counter at the application level
+        on_finish()
 
     @reactive.Effect
     @reactive.event(input.clear)
@@ -97,15 +90,6 @@ def task_server(input, output, session, text):
         # deal because they're very small, but it's good to clean them up.
         finish_task.destroy()
         clear_task.destroy()
-
-    # Returning the input.finish button to the parent scope allows us
-    # to react to it in the parent context to keep track of the number of
-    # completed tasks.
-    #
-    # This is a good pattern because it makes the module more general.
-    # The same module can be used by different applications which may
-    # do different things when the task is completed.
-    return input.finish
 
 
 app = App(app_ui, server)
