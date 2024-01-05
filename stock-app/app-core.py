@@ -18,7 +18,7 @@ app_ui = ui.page_sidebar(
         width="300px",
     ),
     ui.layout_columns(
-        ui.output_ui("price_boxes"),
+        ui.output_ui("price_boxes", fill=True, fillable=True).add_class("gap-2"),
         ui.card(
             ui.card_header(
                 "Historical price (Click gear for plot options)",
