@@ -1,0 +1,4 @@
+pandas
+nba_api
+plotly
+shinywidgets
