@@ -85,7 +85,12 @@ def server(input: Inputs, output: Outputs, session: Session):
         # Assuming 'df' is your DataFrame
         list_of_tuples = [tuple(row) for row in latest_prices.itertuples(index=False)]
         return [
-            ui.value_box(title=ticker, value=price, theme="gradient-orange-indigo")
+            ui.value_box(
+                title=ticker,
+                value=price,
+                theme="gradient-orange-indigo",
+                max_height="200px",
+            )
             for ticker, price in list_of_tuples
         ]
 
