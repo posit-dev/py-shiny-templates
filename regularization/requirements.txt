@@ -1,0 +1,6 @@
+shiny
+pandas
+seaborn
+compare
+scikit-learn
+
