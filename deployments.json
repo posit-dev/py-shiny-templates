@@ -3,12 +3,10 @@ on:
 [
   {
     "folder": "basic-app",
-    "guid": "guid-for-basic-app",
-    "url": ""
+    "guid": 10892533,
   },
   {
     "folder": "dashboard",
-    "guid": "guid-for-dashboard",
-    "url": ""
+    "guid": 10892532,
   }
 ]
