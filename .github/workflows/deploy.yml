@@ -28,4 +28,4 @@ jobs:
         run: rsconnect add --account gallery --name gallery --token $TOKEN --secret $SECRET
 
       - name: Deploy app to shinyapps.io
-        run: rsconnect deploy shiny ./basic-app --name gallery --title "Basic app"
+        run: rsconnect deploy shiny ./basic-app --name gallery --title "Basic app" --entrypoint app-core.py
