@@ -16,7 +16,7 @@ jobs:
       - name: Set up Python
         uses: actions/setup-python@v2
         with:
-          python-version: "3.8.13" # Use a supported Python version
+          python-version: "3.9.13" # Use a supported Python version
 
       - name: Install rsconnect-python
         run: pip install rsconnect-python
@@ -26,7 +26,7 @@ jobs:
           ACCOUNT: ${{ secrets.ACCOUNT }}
           TOKEN: ${{ secrets.TOKEN }}
           SECRET: ${{ secrets.SECRET }}
-        run: rsconnect add --account $ACCOUNT --name shinyapps --token $TOKEN --secret $SECRET
+        run: rsconnect add --account gallery --name gallery --token $TOKEN --secret $SECRET
 
       - name: Deploy app to shinyapps.io
-        run: rsconnect deploy shiny /basicapp --name shinyapps --title "Basic app"
+        run: rsconnect deploy shiny /basicapp --name gallery --title "Basic app"
