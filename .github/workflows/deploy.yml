@@ -15,21 +15,13 @@ jobs:
         uses: actions/checkout@v2
       - name: Install PyYaml
         run: pip install pyyaml
-      - name: Generate matrix from deployments.yml
+      - name: Generate matrix from deployments.json
         id: set-matrix
         run: |
-          echo "Reading deployments.yml to create matrix..."
-          MATRIX_JSON=$(python -c '
-                        import yaml, json, sys
-                        with open(".github/deployments.yml", "r") as file:
-                        deployments = yaml.safe_load(file)
-                        matrix = {"include": []}
-                        for app in deployments:
-                            matrix["include"].append({"app-dir": app["folder"], "guid": app["guid"]})
-                        print(json.dumps(matrix))
-                        ')
+          MATRIX_JSON=$(cat .github/deployments.json)
           echo "::set-output name=matrix::$MATRIX_JSON"
-          shell: bash
+            echo "::set-output name=matrix::$MATRIX_JSON"
+            shell: bash
 
   deploy:
     runs-on: ubuntu-latest

@@ -1,0 +1,14 @@
+on:
+
+[
+  {
+    "folder": "basic-app",
+    "guid": "guid-for-basic-app",
+    "url": ""
+  },
+  {
+    "folder": "dashboard",
+    "guid": "guid-for-dashboard",
+    "url": ""
+  }
+]
