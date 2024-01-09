@@ -43,6 +43,5 @@ jobs:
         run: |
           rsconnect deploy shiny ${{ matrix.folder }} \
             --name gallery \
-            --title template-${{ matrix.folder }} \
             --entrypoint app-core.py \
             -a ${{ matrix.guid }}
