@@ -6,6 +6,31 @@ on:
       - CI-deployment # Adjust this as needed for your workflow
 
 jobs:
+  prepare-matrix:
+    runs-on: ubuntu-latest
+    outputs:
+      matrix: ${{ steps.set-matrix.outputs.matrix }}
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v2
+      - name: Install PyYaml
+        run: pip install pyyaml
+      - name: Generate matrix from deployments.yml
+        id: set-matrix
+        run: |
+          echo "Reading deployments.yml to create matrix..."
+          MATRIX_JSON=$(python -c '
+                        import yaml, json, sys
+                        with open(".github/deployments.yml", "r") as file:
+                        deployments = yaml.safe_load(file)
+                        matrix = {"include": []}
+                        for app in deployments:
+                            matrix["include"].append({"app-dir": app["folder"], "guid": app["guid"]})
+                        print(json.dumps(matrix))
+                        ')
+          echo "::set-output name=matrix::$MATRIX_JSON"
+          shell: bash
+
   deploy:
     runs-on: ubuntu-latest
     strategy:
@@ -26,5 +51,5 @@ jobs:
           TOKEN: ${{ secrets.SHINYAPPS_TOKEN }}
           SECRET: ${{ secrets.SHINYAPPS_SECRET }}
         run: rsconnect add --account gallery --name gallery --token $TOKEN --secret $SECRET
-      - name: Deploy app to shinyapps.io
-        run: rsconnect deploy shiny ${{ matrix.app-dir }} --name gallery --title template-${{ matrix.app-dir }} --entrypoint app-core.py
+      - name: Deploy app to shinyapps
+        run: rsconnect deploy shiny ${{ matrix.app-dir }} --name gallery --title template-${{ matrix.app-dir }} --entrypoint app-core.py --guid ${{ matrix.guid }}
