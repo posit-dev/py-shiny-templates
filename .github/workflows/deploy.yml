@@ -23,9 +23,8 @@ jobs:
 
       - name: Configure rsconnect-python
         env:
-          ACCOUNT: ${{ secrets.ACCOUNT }}
-          TOKEN: ${{ secrets.TOKEN }}
-          SECRET: ${{ secrets.SECRET }}
+          TOKEN: ${{ secrets.SHINYAPPS_TOKEN }}
+          SECRET: ${{ secrets.SHINYAPPS_SECRET }}
         run: rsconnect add --account gallery --name gallery --token $TOKEN --secret $SECRET
 
       - name: Deploy app to shinyapps.io
