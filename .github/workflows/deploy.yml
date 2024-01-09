@@ -41,8 +41,8 @@ jobs:
         run: rsconnect add --account gallery --name gallery --token $TOKEN --secret $SECRET
       - name: Deploy app to shinyapps
         run: |
-          rsconnect deploy shiny ${{ matrix.app-dir }} \
+          rsconnect deploy shiny ${{ matrix.folder }} \
             --name gallery \
-            --title template-${{ matrix.app-dir }} \
+            --title template-${{ matrix.folder }} \
             --entrypoint app-core.py \
             -a ${{ matrix.guid }}
