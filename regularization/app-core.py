@@ -9,7 +9,6 @@ import seaborn as sns
 # Import custom Python Functions from local file
 from compare import compare, sim_data
 from shiny import App, reactive, render, ui
-from page_article import page_article
 
 # data
 nsims = 100
@@ -17,7 +16,7 @@ sim = [sim_data(n=1000) for i in range(0, nsims)]
 
 
 # app
-app_ui = page_article(
+app_ui = ui.page_fixed(
     # add head that allows LaTeX to be displayed via MathJax
     ui.head_content(
         ui.tags.script(
