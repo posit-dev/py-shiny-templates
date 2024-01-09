@@ -17,6 +17,7 @@ jobs:
         id: set-matrix
         run: |
           MATRIX_JSON=$(cat deployments.json)
+          cat MATRIX_JSON
           echo "::set-output name=matrix::$MATRIX_JSON"
 
   deploy:
