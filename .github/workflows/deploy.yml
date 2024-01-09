@@ -16,7 +16,7 @@ jobs:
       - name: Generate matrix from deployments.json
         id: set-matrix
         run: |
-          MATRIX_JSON=$(cat deployments.json)
+          MATRIX_JSON=$(jq -c . < deployments.json)
           echo "::set-output name=matrix::$MATRIX_JSON"
 
   deploy:
