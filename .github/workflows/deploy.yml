@@ -9,6 +9,7 @@ jobs:
   deploy:
     runs-on: ubuntu-latest
     strategy:
+      fail-fast: false
       matrix:
         app-dir: ["basic-app", "dashboard"] # List your app directories here
     steps:
@@ -26,4 +27,4 @@ jobs:
           SECRET: ${{ secrets.SHINYAPPS_SECRET }}
         run: rsconnect add --account gallery --name gallery --token $TOKEN --secret $SECRET
       - name: Deploy app to shinyapps.io
-        run: rsconnect deploy shiny ./${{ matrix.app-dir }} --name gallery --title ${{ matrix.app-dir }} --entrypoint app-core.py
+        run: rsconnect deploy shiny ${{ matrix.app-dir }} --name gallery --title template-${{ matrix.app-dir }} --entrypoint app-core.py
