@@ -1,14 +1,12 @@
-on:
-
 {
-  include = [
+  "include": [
     {
       "folder": "basic-app",
-      "guid": 10892533,
+      "guid": 10892533
     },
     {
       "folder": "dashboard",
-      "guid": 10892532,
+      "guid": 10892532
     }
   ]
 }
