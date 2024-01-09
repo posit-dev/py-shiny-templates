@@ -1,0 +1,32 @@
+name: Deploy to shinyapps.io
+
+on:
+  push:
+    branches:
+      - CI-deploy # Adjust this as needed for your workflow
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v2
+
+      - name: Set up Python
+        uses: actions/setup-python@v2
+        with:
+          python-version: "3.8.13" # Use a supported Python version
+
+      - name: Install rsconnect-python
+        run: pip install rsconnect-python
+
+      - name: Configure rsconnect-python
+        env:
+          ACCOUNT: ${{ secrets.ACCOUNT }}
+          TOKEN: ${{ secrets.TOKEN }}
+          SECRET: ${{ secrets.SECRET }}
+        run: rsconnect add --account $ACCOUNT --name shinyapps --token $TOKEN --secret $SECRET
+
+      - name: Deploy app to shinyapps.io
+        run: rsconnect deploy shiny /basicapp --name shinyapps --title "Basic app"
