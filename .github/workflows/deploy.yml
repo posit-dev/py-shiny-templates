@@ -13,21 +13,18 @@ jobs:
     steps:
       - name: Check out repository
         uses: actions/checkout@v2
-      - name: Install PyYaml
-        run: pip install pyyaml
       - name: Generate matrix from deployments.json
         id: set-matrix
         run: |
           MATRIX_JSON=$(cat deployments.json)
           echo "::set-output name=matrix::$MATRIX_JSON"
-            shell: bash
 
   deploy:
+    needs: prepare-matrix
     runs-on: ubuntu-latest
     strategy:
       fail-fast: false
-      matrix:
-        app-dir: ["basic-app", "dashboard"] # List your app directories here
+      matrix: ${{fromJson(needs.prepare-matrix.outputs.matrix)}}
     steps:
       - name: Check out repository
         uses: actions/checkout@v2
@@ -43,4 +40,9 @@ jobs:
           SECRET: ${{ secrets.SHINYAPPS_SECRET }}
         run: rsconnect add --account gallery --name gallery --token $TOKEN --secret $SECRET
       - name: Deploy app to shinyapps
-        run: rsconnect deploy shiny ${{ matrix.app-dir }} --name gallery --title template-${{ matrix.app-dir }} --entrypoint app-core.py --guid ${{ matrix.guid }}
+        run: |
+          rsconnect deploy shiny ${{ matrix.app-dir }} 
+          --name gallery 
+          --title template-${{ matrix.app-dir }} 
+          --entrypoint app-core.py 
+          -a ${{ matrix.guid }}
