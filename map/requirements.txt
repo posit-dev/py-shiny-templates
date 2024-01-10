@@ -2,4 +2,4 @@ shiny
 shinywidgets
 ipyleaflet
 geopy
-
+faicons
