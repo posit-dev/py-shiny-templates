@@ -48,7 +48,9 @@ jobs:
       - name: Deploy app to shinyapps
         if: steps.cache-deployment.outputs.cache-hit != 'true'
         run: |
-          rsconnect deploy shiny ${{ matrix.folder }} \
+          for i in {1..3}; do
+            rsconnect deploy shiny ${{ matrix.folder }} \
               --name gallery \
               --entrypoint app-core.py \
-              -a ${{ matrix.guid }}
+              -a ${{ matrix.guid }} && break || sleep 15
+          done
