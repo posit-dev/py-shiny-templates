@@ -16,7 +16,7 @@ jobs:
         run: |
           #!/bin/bash
           set -e
-          for dir in $(find ./* -type d); do
+          for dir in ./*/ ; do
             if [ ! -f "$dir/app-core.py" ]; then
               echo "app-core.py must be in each folder, but it's missing in $dir"
               exit 1
