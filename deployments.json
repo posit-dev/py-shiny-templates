@@ -7,6 +7,54 @@
     {
       "folder": "dashboard",
       "guid": 10892532
+    },
+    {
+      "folder": "database-explorer",
+      "guid": null
+    },
+    {
+      "folder": "map",
+      "guid": null
+    },
+    {
+      "folder": "monitor-database",
+      "guid": null
+    },
+    {
+      "folder": "monitor-file",
+      "guid": null
+    },
+    {
+      "folder": "monitor-folder",
+      "guid": null
+    },
+    {
+      "folder": "multi-page",
+      "guid": null
+    },
+    {
+      "folder": "nba-dashboard",
+      "guid": null
+    },
+    {
+      "folder": "regularization",
+      "guid": null
+    },
+    {
+      "folder": "stock-app",
+      "guid": null
+    },
+    {
+      "folder": "survey",
+      "guid": null
+    },
+    {
+      "folder": "todo_list",
+      "guid": null
+    },
+    {
+      "folder": "wizard",
+      "guid": null
     }
   ]
 }

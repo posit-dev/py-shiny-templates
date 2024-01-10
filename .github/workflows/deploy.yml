@@ -27,9 +27,9 @@ jobs:
       matrix: ${{fromJson(needs.prepare-matrix.outputs.matrix)}}
     steps:
       - name: Check out repository
-        uses: actions/checkout@v2
+        uses: actions/checkout@v4
       - name: Set up Python
-        uses: actions/setup-python@v2
+        uses: actions/setup-python@v5
         with:
           python-version: "3.9.13"
       - name: Install rsconnect-python
@@ -41,7 +41,14 @@ jobs:
         run: rsconnect add --account gallery --name gallery --token $TOKEN --secret $SECRET
       - name: Deploy app to shinyapps
         run: |
-          rsconnect deploy shiny ${{ matrix.folder }} \
-            --name gallery \
-            --entrypoint app-core.py \
-            -a ${{ matrix.guid }}
+          if [ -n "${{ matrix.guid }}" ]; then
+            rsconnect deploy shiny ${{ matrix.folder }} \
+              --name gallery \
+              --entrypoint app-core.py \
+              -a ${{ matrix.guid }}
+          else
+            rsconnect deploy shiny ${{ matrix.folder }} \
+              --name gallery \
+              --entrypoint app-core.py \
+              --title "template-${{ matrix.folder }}"
+          fi
