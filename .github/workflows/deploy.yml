@@ -3,7 +3,7 @@ name: Deploy to shinyapps.io
 on:
   push:
     branches:
-      - CI-deployment # Adjust this as needed for your workflow
+      - main
 
 jobs:
   prepare-matrix:
