@@ -70,7 +70,8 @@ app_ui = ui.page_fixed(
                 and minimizing that loss function. A loss function is a metric for
                 measuring how your model is performing where lower is better. For
                 example, Mean Squared Error is a loss function that measures the squared
-                distance (on average) between a model's guesses and the true values."""
+                distance (on average) between a model's guesses and the true values.
+                """
             ),
             # LaTeX
             ui.p("$$MSE = \\frac{1}{n} \\sum_{i=1}^{n} (Y_i - \hat{Y}_i)^2$$"),
@@ -82,7 +83,8 @@ app_ui = ui.page_fixed(
                 function is made up of two things: the original loss function (the MSE,
                 here) and the penalty, predictors must 'pull their weight' by reducing
                 the MSE enough to be 'worth' the penalty. This causes small, unimportant
-                predictors to have small or zero coefficients."""
+                predictors to have small or zero coefficients.
+                """
             ),
             ui.p(
                 """
