@@ -37,13 +37,15 @@ jobs:
         uses: actions/cache@v2
         with:
           path: ${{ matrix.folder }}
-          key: ${{ runner.os }}-deploy-${{ hashFiles(matrix.folder) }}
+          key: ${{ runner.os }}-deploy-${{ hashFiles(matrix.folder) }}-${{ hashFiles('requirements.txt') }}
       - name: Install rsconnect-python
+        if: steps.cache-deployment.outputs.cache-hit != 'true'
         run: pip install rsconnect-python
       - name: Configure rsconnect-python
         env:
           TOKEN: ${{ secrets.SHINYAPPS_TOKEN }}
           SECRET: ${{ secrets.SHINYAPPS_SECRET }}
+        if: steps.cache-deployment.outputs.cache-hit != 'true'
         run: rsconnect add --account gallery --name gallery --token $TOKEN --secret $SECRET
       - name: Deploy app to shinyapps
         if: steps.cache-deployment.outputs.cache-hit != 'true'
