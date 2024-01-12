@@ -24,3 +24,9 @@ Each deployment retries three times to avoid spurious failures, and caches the r
 3. Add your application to `deployments.json`, you will need to login to shinyapps.io to get the guid.
 
 4. Raise a PR with your changes
+
+# Updating Shiny
+
+We want all of the apps to redeploy whenever there is a new Shiny release to make sure that they all reflect the current state of the Shiny package.
+To accomplish this we have included the `requirements.txt` file in the deployment cache key.
+To update all of the applications to the latest version of Shiny, you can raise a PR which updates the `requirements.txt` file in this repository.
