@@ -21,36 +21,38 @@ app_ui = ui.page_sidebar(
         ui.input_slider(
             "mass",
             "Mass",
-            2000,
-            6000,
-            3400,
+            min=2000,
+            max=6000,
+            value=(3250, 4750),
+            step=25,
         ),
         ui.input_checkbox_group(
             "species", "Filter by species", species, selected=species
         ),
     ),
-    ui.row(ui.layout_columns(*[make_value_box(penguin) for penguin in species])),
-    ui.row(
-        ui.layout_columns(
-            ui.card(
-                ui.card_header("Summary statistics"),
-                ui.output_data_frame("summary_statistics"),
-            ),
-            ui.card(
-                ui.card_header("Penguin bills"),
-                ui.output_plot("length_depth"),
-            ),
+    ui.layout_columns(*[make_value_box(penguin) for penguin in species]),
+    ui.layout_columns(
+        ui.card(
+            ui.card_header("Summary statistics"),
+            ui.output_data_frame("summary_statistics"),
+        ),
+        ui.card(
+            ui.card_header("Penguin bills"),
+            ui.output_plot("length_depth"),
         ),
     ),
+    class_="bslib-page-dashboard",
 )
 
 
 def server(input: Inputs, output: Outputs, session: Session):
     @reactive.Calc
     def filtered_df() -> pd.DataFrame:
-        filt_df = df[df["Species"].isin(input.species())]
-        filt_df = filt_df.loc[filt_df["Body Mass (g)"] > input.mass()]
-        return filt_df
+        return df[
+            df["Species"].isin(input.species()) &
+            (df["Body Mass (g)"] > input.mass()[0]) &
+            (df["Body Mass (g)"] < input.mass()[1])
+        ]
 
     @render.text
     def adelie_count():
