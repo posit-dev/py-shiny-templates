@@ -41,6 +41,7 @@ app_ui = ui.page_sidebar(
             ui.output_plot("length_depth"),
         ),
     ),
+    class_="bslib-page-dashboard",
 )
 
 
