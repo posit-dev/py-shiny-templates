@@ -21,9 +21,10 @@ app_ui = ui.page_sidebar(
         ui.input_slider(
             "mass",
             "Mass",
-            2000,
-            6000,
-            3400,
+            min=2000,
+            max=6000,
+            value=(3250, 4750),
+            step=25,
         ),
         ui.input_checkbox_group(
             "species", "Filter by species", species, selected=species
@@ -46,9 +47,11 @@ app_ui = ui.page_sidebar(
 def server(input: Inputs, output: Outputs, session: Session):
     @reactive.Calc
     def filtered_df() -> pd.DataFrame:
-        filt_df = df[df["Species"].isin(input.species())]
-        filt_df = filt_df.loc[filt_df["Body Mass (g)"] > input.mass()]
-        return filt_df
+        return df[
+            df["Species"].isin(input.species()) &
+            (df["Body Mass (g)"] > input.mass()[0]) &
+            (df["Body Mass (g)"] < input.mass()[1])
+        ]
 
     @render.text
     def adelie_count():
