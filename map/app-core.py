@@ -1,107 +1,212 @@
+from faicons import icon_svg
+from geopy.distance import great_circle, geodesic
+import ipyleaflet as L
+import requests
+
 from shiny import App, ui, reactive, render
 from shinywidgets import render_widget, output_widget
-import ipyleaflet as ipyl
-from ipyleaflet import basemaps
-from geopy.geocoders import Nominatim
-from geopy.distance import great_circle, geodesic
-from cities import cities
-from faicons import icon_svg
 
+from cities import CITIES
+from basemaps import BASEMAPS
 
-geolocator = Nominatim(user_agent="city_locator")
-
-city_names = sorted(list(cities.keys()))
+city_names = sorted(list(CITIES.keys()))
 
 app_ui = ui.page_sidebar(
     ui.sidebar(
-        ui.input_selectize("city_1", "City 1", choices=city_names, selected="New York"),
-        ui.input_selectize("city_2", "City 2", choices=city_names, selected="London"),
+        ui.input_selectize(
+            "loc1", "Location 1", choices=city_names, selected="New York"
+        ),
+        ui.input_selectize(
+            "loc2", "Location 2", choices=city_names, selected="London"
+        ),
+        ui.input_selectize(
+            "basemap", "Choose a basemap", choices=list(BASEMAPS.keys()),
+            selected="WorldImagery"
+        )
     ),
-    ui.layout_columns(
+    ui.layout_column_wrap(
         ui.value_box(
             "Great Circle Distance",
             ui.output_text("great_circle_dist"),
             theme="gradient-blue-indigo",
-            showcase=icon_svg("globe", width="50px"),
+            showcase=icon_svg("globe"),
         ),
         ui.value_box(
             "Geodisic Distance",
             ui.output_text("geo_dist"),
             theme="gradient-blue-indigo",
-            showcase=icon_svg("ruler", width="50px"),
+            showcase=icon_svg("ruler"),
         ),
         ui.value_box(
             "Altitude Difference",
             ui.output_text("altitude"),
             theme="gradient-blue-indigo",
-            showcase=icon_svg("mountain", width="50px"),
+            showcase=icon_svg("mountain"),
         ),
+        fill=False,
     ),
-    ui.card(output_widget("map"), fill=True),
+    ui.card(
+        ui.card_header("Map (drag the markers to change locations)"),
+        output_widget("map")
+    ),
+    title="Location Distance Calculator",
+    fillable=True,
 )
 
 
 def server(input, output, session):
-    @reactive.Calc()
-    def city_1_stats():
-        return (
-            cities[input.city_1()]["latitude"],
-            cities[input.city_1()]["longitude"],
+    
+    # Reactive values to store location information
+    loc1 = reactive.value()
+    loc2 = reactive.value()
+    
+    # Update the reactive values when the selectize inputs change
+    @reactive.effect
+    def _():
+        loc1.set(
+            CITIES.get(input.loc1(), loc_str_to_coords(input.loc1()))
+        )
+        loc2.set(
+            CITIES.get(input.loc2(), loc_str_to_coords(input.loc2()))
         )
 
-    @reactive.Calc()
-    def city_2_stats():
-        return (
-            cities[input.city_2()]["latitude"],
-            cities[input.city_2()]["longitude"],
-        )
+    # When a marker is moved, the input value gets updated to "lat, lon",
+    # so we decode that into a dict (and also look up the altitude)
+    def loc_str_to_coords(x: str) -> dict:
+        latlon = x.split(", ")
+        if len(latlon) != 2:
+            return {}
+        
+        lat = float(latlon[0])
+        lon = float(latlon[1])
 
-    @render.text()
+        try:
+            query = f'https://api.open-elevation.com/api/v1/lookup?locations={lat},{lon}'
+            r = requests.get(query).json()
+            altitude = r["results"][0]["elevation"]
+        except Exception:
+            altitude = None
+
+        return {"latitude": lat, "longitude": lon, "altitude": altitude}
+    
+    # Convenient way to get the lat/lons as a tuple
+    @reactive.calc
+    def loc1xy():
+        return loc1()["latitude"], loc1()["longitude"]
+
+    @reactive.calc
+    def loc2xy():
+        return loc2()["latitude"], loc2()["longitude"]
+
+    # Circle distance value box
+    @render.text
     def great_circle_dist():
-        return (
-            f"{great_circle(city_1_stats(), city_2_stats()).kilometers.__round__(2)} km"
-        )
+        circle = great_circle(loc1xy(), loc2xy())
+        return f"{circle.kilometers.__round__(1)} km"
 
+    # Geodesic distance value box
     @render.text()
     def geo_dist():
-        return f"{geodesic(city_1_stats(), city_2_stats()).kilometers.__round__(2)} km"
+        dist = geodesic(loc1xy(), loc2xy())
+        return f"{dist.kilometers.__round__(1)} km"
 
     @render.text()
     def altitude():
-        city_1_alt = cities[input.city_1()]["altitude"]
-        city_2_alt = cities[input.city_2()]["altitude"]
+        try:
+            return f'{loc1()["altitude"] - loc2()["altitude"]} m'
+        except TypeError:
+            return "N/A (altitude lookup failed)"
 
-        return f"{abs(city_1_alt - city_2_alt)} m"
-
+    # For performance, render the map once and then perform partial updates
+    # via reactive side-effects
     @render_widget
     def map():
-        m = ipyl.Map(basemap=basemaps.Gaode.Satellite, zoom=4)
-        m.add_layer(ipyl.Marker(location=city_1_stats()))
-        m.add_layer(ipyl.Marker(location=city_2_stats()))
-        m.add_layer(
-            ipyl.Polyline(
-                locations=[city_1_stats(), city_2_stats()],
-                color="blue",
-                weight=2,
-            )
-        )
+        return L.Map(zoom=4, center=(0, 0))
 
-        # Calculate the bounds
-        bounds = [
-            [
-                min(city_1_stats()[0], city_2_stats()[0]),
-                min(city_1_stats()[1], city_2_stats()[1]),
-            ],
-            [
-                max(city_1_stats()[0], city_2_stats()[0]),
-                max(city_1_stats()[1], city_2_stats()[1]),
-            ],
+    # Add marker for first location
+    @reactive.effect
+    def _():
+        update_marker(map.widget, loc1xy(), on_move1, "loc1")
+
+    # Add marker for second location
+    @reactive.effect
+    def _():
+        update_marker(map.widget, loc2xy(), on_move2, "loc2")
+
+    # Add line and fit bounds when either marker is moved
+    @reactive.effect
+    def _():
+        update_line(map.widget, loc1xy(), loc2xy())
+
+    # If new bounds fall outside of the current view, fit the bounds
+    @reactive.effect
+    def _():
+        l1 = loc1xy()
+        l2 = loc2xy()
+
+        lat_rng = [min(l1[0], l2[0]), max(l1[0], l2[0])]
+        lon_rng = [min(l1[1], l2[1]), max(l1[1], l2[1])]
+        new_bounds = [
+            [lat_rng[0], lon_rng[0]],
+            [lat_rng[1], lon_rng[1]],
         ]
 
-        # Fit the map to the bounds
-        m.fit_bounds(bounds)
+        b = map.widget.bounds
+        if len(b) == 0:
+            map.widget.fit_bounds(new_bounds)
+        elif (
+          lat_rng[0] < b[0][0] or lat_rng[1] > b[1][0] or
+          lon_rng[0] < b[0][1] or lon_rng[1] > b[1][1]
+        ):
+            map.widget.fit_bounds(new_bounds)
 
-        return m
+    # Update the basemap
+    @reactive.effect
+    def _():
+        update_basemap(map.widget, input.basemap())
+    
+    # ---------------------------------------------------------------
+    # Helper functions
+    # ---------------------------------------------------------------
+    def update_marker(map: L.Map, loc: tuple, on_move: object, name: str):
+        remove_layer(map, name)
+        m = L.Marker(location=loc, draggable=True, name=name)
+        m.on_move(on_move)
+        map.add_layer(m)
+
+    def update_line(map: L.Map, loc1: tuple, loc2: tuple):
+        remove_layer(map, "line")
+        map.add_layer(
+            L.Polyline(locations=[loc1, loc2], color="blue", weight=2, name="line")
+        )
+
+    def update_basemap(map: L.Map, basemap: str):
+        for layer in map.layers:
+            if isinstance(layer, L.TileLayer):
+                map.remove_layer(layer)
+        map.add_layer(
+            L.basemap_to_tiles(BASEMAPS[input.basemap()])
+        )
+
+    def remove_layer(map: L.Map, name: str):
+        for layer in map.layers:
+            if layer.name == name:
+                map.remove_layer(layer)
+        
+    def on_move1(**kwargs):
+        return on_move("loc1", **kwargs)
+
+    def on_move2(**kwargs):
+        return on_move("loc2", **kwargs)
+
+    # When the markers are moved, update the selectize inputs to include the new
+    # location (which results in the locations() reactive value getting updated,
+    # which invalidates any downstream reactivity that depends on it)
+    def on_move(id, **kwargs):
+        loc = kwargs["location"]
+        loc_str = f"{loc[0]}, {loc[1]}"
+        choices = city_names + [loc_str]
+        ui.update_selectize(id, selected=loc_str, choices=choices)
 
 
 app = App(app_ui, server)

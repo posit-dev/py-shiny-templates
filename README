@@ -17,7 +17,7 @@ Each deployment retries three times to avoid spurious failures, and caches the r
 
 # Adding a new application
 
-1. Create a new folder for the application, the folder should contain at least an `app-core.py` file and a `requirements.txt` file. Optionally add an `app-expres.py` file if you want to give people the option to use Shiny Express.
+1. Create a new folder for the application, the folder should contain at least an `app-core.py` file and a `requirements.txt` file. Optionally add an `app-express.py` file if you want to give people the option to use Shiny Express.
 
 2. Deploy the app to shinyapps.io in the `gallery` account, if you don't have access to this account mention it in the PR and a member of the Shiny team will do this and the following step for you.
 

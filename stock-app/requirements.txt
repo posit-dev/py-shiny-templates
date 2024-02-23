@@ -4,3 +4,4 @@ pandas
 shiny
 shinywidgets
 faicons
+cufflinks

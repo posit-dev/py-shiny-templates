@@ -6,13 +6,13 @@ from query import query_output_server, query_output_ui
 
 from shiny import App, reactive, ui
 
-folder = Path(__file__).parent
-db_file = folder / "weather.db"
+app_dir = Path(__file__).parent
+db_file = app_dir / "weather.db"
 
 
 def load_csv(con, csv_name, table_name):
     csv_url = f"https://raw.githubusercontent.com/rfordatascience/tidytuesday/master/data/2022/2022-12-20/{csv_name}.csv"
-    local_file_path = folder / f"{csv_name}.csv"
+    local_file_path = app_dir / f"{csv_name}.csv"
     urllib.request.urlretrieve(csv_url, local_file_path)
     con.sql(
         f"CREATE TABLE {table_name} AS SELECT * FROM read_csv_auto('{local_file_path}')"
@@ -27,10 +27,7 @@ if not Path.exists(db_file):
 
 con = duckdb.connect(str(db_file), read_only=True)
 
-button_style = {"style": "margin: 15px"}
-
 app_ui = ui.page_sidebar(
-    # ui.panel_title("DuckDB query explorer"),
     ui.sidebar(
         ui.input_action_button("add_query", "Add Query", class_="btn btn-primary"),
         ui.input_action_button(
@@ -38,25 +35,26 @@ app_ui = ui.page_sidebar(
         ),
         ui.markdown(
             """
-                    This app lets you explore a dataset using SQL and duckdb.
-                    The data is stored in an on-disk [duckdb](https://duckdb.org/) database,
-                    which leads to extremely fast queries.
-                    """
+            This app lets you explore a dataset using SQL and duckdb.
+            The data is stored in an on-disk [duckdb](https://duckdb.org/) database,
+            which leads to extremely fast queries.
+            """
         ),
     ),
     ui.tags.div(
         query_output_ui("initial_query", remove_id="initial_query"),
         id="module_container",
     ),
+    title="DuckDB query explorer"
 )
 
 
 def server(input, output, session):
-    mod_counter = reactive.Value(0)
+    mod_counter = reactive.value(0)
 
     query_output_server("initial_query", con=con, remove_id="initial_query")
 
-    @reactive.Effect
+    @reactive.effect
     @reactive.event(input.add_query)
     def _():
         counter = mod_counter.get() + 1
@@ -69,7 +67,7 @@ def server(input, output, session):
         )
         query_output_server(id, con=con, remove_id=id)
 
-    @reactive.Effect
+    @reactive.effect
     @reactive.event(input.show_meta)
     def _():
         counter = mod_counter.get() + 1
@@ -83,11 +81,6 @@ def server(input, output, session):
             ),
         )
         query_output_server(id, con=con, remove_id=id)
-
-    @reactive.Effect
-    @reactive.event(input.rmv)
-    def _():
-        ui.remove_ui(selector="div:has(> #txt)")
 
 
 app = App(app_ui, server)

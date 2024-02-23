@@ -1,7 +1,6 @@
 from __future__ import annotations
 
 import sqlite3
-from datetime import datetime, timedelta, timezone
 
 import pandas as pd
 import plotly.express as px
@@ -16,7 +15,7 @@ THRESHOLD_MID_COLOR = "rgb(0, 137, 26)"
 THRESHOLD_LOW = 0.5
 THRESHOLD_LOW_COLOR = "rgb(193, 0, 0)"
 
-# This starts a background process to add records to a database after a random intervale
+# This starts a background process to add records to a database after a random interval
 # You should replace it with a connection to your actual database.
 scoredata.begin()
 
@@ -67,13 +66,13 @@ model_colors = {
 
 def make_value_box(model, score):
     theme = "text-success"
-    icon = icon_svg("check", width="50px")
+    icon = icon_svg("check")
     if score < THRESHOLD_MID:
         theme = "text-warning"
-        icon = icon_svg("triangle-exclamation", width="50px")
+        icon = icon_svg("triangle-exclamation")
     if score < THRESHOLD_LOW:
         theme = "bg-danger"
-        icon = icon_svg("circle-exclamation", width="50px")
+        icon = icon_svg("circle-exclamation")
 
     return ui.value_box(model, ui.h2(score), theme=theme, showcase=icon)
 
@@ -82,18 +81,15 @@ app_ui = ui.page_sidebar(
     ui.sidebar(
         ui.input_checkbox_group("models", "Models", model_names, selected=model_names),
     ),
-    ui.row(
-        ui.h1("Model monitoring dashboard"),
-        ui.output_ui("value_boxes"),
-    ),
-    ui.row(
-        ui.card(output_widget("plot_timeseries")),
-    ),
+    ui.output_ui("value_boxes"),
+    ui.card(output_widget("plot_timeseries")),
+    title="Model monitoring dashboard",
+    fillable=True
 )
 
 
 def server(input: Inputs, output: Outputs, session: Session):
-    @reactive.Calc
+    @reactive.calc
     def filtered_df():
         """
         Return the data frame that should be displayed in the app, based on the user's
@@ -105,7 +101,7 @@ def server(input: Inputs, output: Outputs, session: Session):
         # Filter the rows so we only include the desired models
         return data[data["model"].isin(input.models())]
 
-    @reactive.Calc
+    @reactive.calc
     def filtered_model_names():
         return filtered_df()["model"].unique()
 
@@ -127,7 +123,7 @@ def server(input: Inputs, output: Outputs, session: Session):
                 make_value_box(model, score)
                 for model, score in scores_by_model.items()
             ],
-            width="135px",
+            fill=False,
         )
 
     @render_widget

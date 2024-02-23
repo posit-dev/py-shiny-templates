@@ -1,63 +1,95 @@
-from shiny import Inputs, Outputs, Session, App, reactive, render, req, ui
-from helpers import get_player_stats, list_players, plot_scorigami, teams
 import pandas as pd
-from value_boxes import stat_box_ui, stat_box_server
-from shinywidgets import output_widget, render_widget
+from pathlib import Path
 
-teams = pd.DataFrame(teams.get_teams())
+from shiny import App, reactive, render, req, ui
 
-stats = ["pts", "ast", "reb", "plus_minus"]
+from shinywidgets import output_widget, render_plotly
+import plotly.graph_objects as go
+
+
+app_dir = Path(__file__).parent
+players_df = pd.read_csv(app_dir / "players.csv")
+
+# create dictionary where key is player id and value is name
+players_dict = dict(zip(
+    players_df["person_id"].astype(str),
+    players_df["display_first_last"]
+))
 
 app_ui = ui.page_sidebar(
     ui.sidebar(
         ui.input_selectize(
-            "team",
-            "Team",
-            choices=sorted(teams["nickname"].to_list()),
-            selected="Warriors",
+            "players",
+            "Select players",
+            multiple=True,
+            choices=players_dict,
+            selected=["893"],
         ),
-        ui.output_ui("player_select"),
     ),
-    ui.layout_columns(
-        [
-            ui.card(ui.card_header("Assist to Turnover", output_widget("ast_tov"))),
-            ui.card(ui.card_header("Rebounds", output_widget("dreb_oreb"))),
-        ],
-        [stat_box_ui(stat, stat) for stat in stats],
-        col_widths=[7, 5],
+    ui.card(
+        ui.card_header("Player comparison"),
+        output_widget("all_stats"),
+        full_screen=True,
     ),
+    title="NBA Dashboard",
+    fillable=True,
 )
 
 
-def server(input: Inputs, output: Outputs, session: Session):
-    players = list_players()
+def server(input, output, session):
+    
+    # Career stats for each player
+    # (gets read once the session starts so that this operation doesn't block the UI)
+    careers = pd.read_csv(app_dir / "careers.csv")
 
-    @render.ui
-    def player_select():
-        filtered_players = players[players["team_name"] == input.team()].sort_values(
-            "display_first_last"
+    # One row per player (average over seasons)
+    careers = careers.groupby("person_id").mean()
+
+    @reactive.calc
+    def player_stats():
+        req(input.players())
+        return careers[careers["person_id"].isin(input.players())]
+    
+    stats = [
+        "PTS", "FG_PCT", "FG3_PCT", "FT_PCT", "REB", "AST", "STL", "BLK"
+    ]
+
+    # For each player, get the percentile of each stat
+    @reactive.calc
+    def percentiles():
+        d = player_stats()
+        # For each player stat, get the overall percentile of that stat
+        for index, row in d.iterrows():
+            for stat in stats:
+                d.at[index, stat] = (d[stat] > row[stat]).mean()
+        return d
+
+    # radar chart of player stats
+    @render_plotly
+    def all_stats():
+        #import plotly.express as px
+        
+        d = percentiles()
+        fig = go.Figure()
+
+        for index, row in d.iterrows():
+            fig.add_trace(go.Scatter(
+                r=[row[stat] for stat in stats],
+                theta=stats,
+                fill='toself',
+                name=players_dict[index]
+            ))
+
+        fig.update_layout(
+            polar=dict(
+                radialaxis=dict(
+                    visible=True,
+                    range=[0, 1]
+                )),
+            showlegend=True
         )
-        choice_dict = filtered_players["display_first_last"].to_list()
-        return ui.input_selectize(
-            "player",
-            "Player",
-            choices=choice_dict,
-        )
-        return
 
-    @reactive.Calc
-    def game_logs():
-        return get_player_stats(req(input.player()))
-
-    @render_widget
-    def ast_tov():
-        return plot_scorigami(input.player(), game_logs())
-
-    @render_widget
-    def dreb_oreb():
-        return plot_scorigami(input.player(), game_logs(), "dreb", "oreb")
-
-    [stat_box_server(stat, stat, game_logs=game_logs) for stat in stats]
+        return fig
 
 
 app = App(app_ui, server)

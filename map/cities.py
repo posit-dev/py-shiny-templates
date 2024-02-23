@@ -1,4 +1,4 @@
-cities = {
+CITIES = {
     "New York": {"latitude": 40.7128, "longitude": -74.0060, "altitude": 33},
     "London": {"latitude": 51.5074, "longitude": -0.1278, "altitude": 36},
     "Paris": {"latitude": 48.8566, "longitude": 2.3522, "altitude": 35},

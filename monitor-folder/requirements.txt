@@ -1,3 +1,4 @@
 shiny 
 pandas
 faicons
+watchfiles

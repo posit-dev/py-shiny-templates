@@ -27,9 +27,14 @@ while True:
         {"date": [datetime.now()], "status": [status], "message": [message]}
     )
 
-    if log_path.exists():
-        df.to_csv(log_path, mode="a", header=False, index=False)
-    else:
+    if not log_path.exists():
         df.to_csv(log_path, mode="w", header=True, index=False)
+    else:
+        df_current = pd.read_csv(log_path)
+        # If we get over 10000 rows, just start over
+        if len(df_current) > 10000:
+            df.to_csv(log_path, mode="w", header=True, index=False)
+        else:
+            df.to_csv(log_path, mode="a", header=False, index=False)
     # Wait for a second before the next append operation
     time.sleep(random.randint(1, 5))

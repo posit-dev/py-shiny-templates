@@ -3,3 +3,4 @@ shinywidgets
 ipyleaflet
 geopy
 faicons
+requests

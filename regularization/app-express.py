@@ -8,9 +8,20 @@ import seaborn as sns
 
 # Import custom Python Functions from local file
 from compare import compare, sim_data
-from shiny import App, reactive, render, ui
+from shiny import reactive
+from shiny.express import input, render, ui
 
 app_dir = Path(__file__).parent
+
+# Allow LaTeX to be displayed via MathJax
+ui.head_content(
+    ui.tags.script(
+        src="https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"
+    ),
+    ui.tags.script(
+        "if (window.MathJax) MathJax.Hub.Queue(['Typeset', MathJax.Hub]);"
+    )
+)
 
 
 # Helper function to restrict width of content
@@ -31,73 +42,28 @@ def restrict_width(*args, sm=None, md=None, lg=None, pad_y=5, **kwargs):
     )
 
 
-# Define the UI
-app_ui = ui.page_fixed(
-    # Allow LaTeX to be displayed via MathJax
-    ui.head_content(
-        ui.tags.script(
-            src="https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"
-        ),
-        ui.tags.script(
-            "if (window.MathJax) MathJax.Hub.Queue(['Typeset', MathJax.Hub]);"
-        ),
-    ),
-    # Title
-    restrict_width(
-        ui.h1(
-            "How Does Regularization Strength Affect Coefficient Estimates?",
-            class_="text-lg-center text-left"
-        ),
-        sm=10, md=10, lg=8,
-    ),
-    # Lead in
-    restrict_width(
-        ui.input_slider(
-            "a", "Select a Regularization Strength:",
-            0.000000001, 1, 0.1,
-            step=0.01, width="100%",
-        ),
-        ui.p(
-            {"class": "pt-4 small"},
-            "(Notice how, as the strength increases, lasso coefficients approach 0)",
-        ),
-        sm=10, md=7, lg=5, pad_y=4,
-    ),
-    # Plot
-    restrict_width(ui.output_plot("plot"), lg=11),
-    # Explanation and Explore prose
-    restrict_width(
-        ui.markdown(open(app_dir / "prose.md").read()),
-        sm=10, md=10, lg=6
-    ),
-    restrict_width(
-        ui.h2("Plots Separated by Vowels and Consonants", class_="text-center"),
-        lg=11
-    ),
-    # output plots separated by real effects (vowels), and zero-effects (consonants)
-    restrict_width(
-        ui.output_plot("plotVOWELS"),
-        ui.output_plot("plotCONSONANTS"),
-        lg=11, pad_y=0,
-    ),
-    ui.div(class_="pb-5"),  # add padding to bottom of page
-)
+# Title
+with restrict_width(sm=10, md=10, lg=8):
+    ui.h1(
+        "How Does Regularization Strength Affect Coefficient Estimates?",
+        class_="text-lg-center text-left"
+    )
+    
 
+# Lead in
+with restrict_width(sm=10, md=7, lg=5, pad_y=4):
+    ui.input_slider(
+        "a", "Select a Regularization Strength:",
+        0.000000001, 1, 0.1,
+        step=0.01, width="100%",
+    )
+    ui.p(
+        {"class": "pt-4 small"},
+        "(Notice how, as the strength increases, lasso coefficients approach 0)",
+    )
 
-def server(input, output, session):
-    # data
-    nsims = 100
-    sim = [sim_data(n=1000) for i in range(0, nsims)]
-
-    # reactive Calc that runs LASSO, Ridge, and Linear models on generated data
-    @reactive.calc
-    def models():
-        sim_alpha = [compare(df, alpha=input.a()) for df in sim]
-        sim_alpha = pd.concat(sim_alpha)
-
-        return sim_alpha
-
-    # output plot of all simulation coefficients
+# Plot of all simulation coefficients
+with restrict_width(lg=11):
     @render.plot
     def plot():
         # get data from reactive Calc
@@ -116,8 +82,19 @@ def server(input, output, session):
         tt = "Coefficient Estimates when alpha = " + str(input.a())
         ax2.set(xlabel="", ylabel="Coefficient Value", title=tt)
         return fig
+    
 
-    # output plot of all simulation coefficients (vowels only)
+# Explanation and Explore prose
+with restrict_width(sm=10, md=10, lg=6):
+    ui.markdown(open(app_dir / "prose.md").read())
+
+
+with restrict_width(lg=11):
+    ui.h2("Plots Separated by Vowels and Consonants", class_="text-center")
+
+# output plots separated by real effects (vowels), and zero-effects (consonants)
+with restrict_width(lg=11, pad_y=0):
+    # output plot of vowel coefficients
     @render.plot
     def plotVOWELS():
         # get data from reactive Calc
@@ -139,12 +116,11 @@ def server(input, output, session):
         ax2.set(xlabel="", ylabel="Coefficient Value", title=tt)
         return fig
 
-    # output plot of all simulation coefficients (consonants only)
+    # output plot of all consonants coefficients
     @render.plot
     def plotCONSONANTS():
         # get data from reactive Calc
         sim_alpha = models()
-
         consonants = [
             n in ["B", "C", "D", "G", "H", "J", "K"] for n in sim_alpha.conames
         ]
@@ -165,4 +141,17 @@ def server(input, output, session):
         return fig
 
 
-app = App(app_ui, server)
+ui.div(class_="pb-5")  # add padding to bottom of page
+
+
+# data
+nsims = 100
+sim = [sim_data(n=1000) for i in range(0, nsims)]
+
+
+# reactive Calc that runs LASSO, Ridge, and Linear models on generated data
+@reactive.calc
+def models():
+    sim_alpha = [compare(df, alpha=input.a()) for df in sim]
+    sim_alpha = pd.concat(sim_alpha)
+    return sim_alpha
