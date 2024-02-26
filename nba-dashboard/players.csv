@@ -1349,7 +1349,7 @@ person_id,display_last_comma_first,display_first_last,rosterstatus,from_year,to_
 76720,"Fitzgerald, Bob",Bob Fitzgerald,0,1946,1948,HISTADD_bob_fitzgerald,bob_fitzgerald,0,,,,,,Y,00
 76719,"Fitzgerald, Dick",Dick Fitzgerald,0,1946,1947,HISTADD_dick_fitzgerald,dick_fitzgerald,0,,,,,,Y,00
 2033,"Fizer, Marcus",Marcus Fizer,0,2000,2005,marcus_fizer,marcus_fizer,0,,,,,,Y,01
-1641745,"Flagler, Adam",Adam Flagler,1,2023,2023,adam_flagler,adam_flagler,1610612760,Oklahoma City,Thunder,OKC,thunder,thunder,N,11
+1641745,"Flagler, Adam",Adam Flagler,1,2023,2023,adam_flagler,adam_flagler,1610612760,Oklahoma City,Thunder,OKC,thunder,thunder,Y,11
 76721,"Fleishman, Jerry",Jerry Fleishman,0,1946,1952,HISTADD_jerry_fleishman,jerry_fleishman,0,,,,,,Y,00
 76722,"Fleming, Al",Al Fleming,0,1977,1977,HISTADD_al_fleming,al_fleming,0,,,,,,Y,00
 76723,"Fleming, Ed",Ed Fleming,0,1955,1959,HISTADD_ed_fleming,ed_fleming,0,,,,,,Y,00
@@ -1437,6 +1437,7 @@ person_id,display_last_comma_first,display_first_last,rosterstatus,from_year,to_
 76765,"Fuller, Tony",Tony Fuller,0,1980,1980,HISTADD_tony_fuller,tony_fuller,0,,,,,,Y,00
 1628365,"Fultz, Markelle",Markelle Fultz,1,2017,2023,markelle_fultz,markelle_fultz,1610612753,Orlando,Magic,ORL,magic,magic,Y,00
 1444,"Funderburke, Lawrence",Lawrence Funderburke,0,1997,2004,lawrence_funderburke,lawrence_funderburke,0,,,,,,Y,00
+1641847,"Funk, Andrew",Andrew Funk,1,2023,2023,andrew_funk,andrew_funk,1610612741,Chicago,Bulls,CHI,bulls,bulls,Y,11
 76767,"Furlow, Terry",Terry Furlow,0,1976,1979,HISTADD_terry_furlow,terry_furlow,0,,,,,,Y,00
 76768,"Gabor, Billy",Billy Gabor,0,1949,1954,HISTADD_billy_gabor,billy_gabor,0,,,,,,Y,00
 1629117,"Gabriel, Wenyen",Wenyen Gabriel,0,2018,2022,wenyen_gabriel,wenyen_gabriel,0,,,,,,Y,11
@@ -1537,7 +1538,7 @@ person_id,display_last_comma_first,display_first_last,rosterstatus,from_year,to_
 600014,"Gilmore, Artis",Artis Gilmore,0,1976,1987,HISTADD_artis_gilmore,artis_gilmore,0,,,,,,Y,00
 76817,"Gilmore, Walt",Walt Gilmore,0,1970,1970,HISTADD_walt_gilmore,walt_gilmore,0,,,,,,Y,00
 76818,"Gilmur, Chuck",Chuck Gilmur,0,1946,1950,HISTADD_chuck_gilmur,chuck_gilmur,0,,,,,,Y,00
-1631367,"Gilyard, Jacob",Jacob Gilyard,1,2022,2023,jacob_gilyard,jacob_gilyard,1610612763,Memphis,Grizzlies,MEM,grizzlies,grizzlies,Y,11
+1631367,"Gilyard, Jacob",Jacob Gilyard,0,2022,2023,jacob_gilyard,jacob_gilyard,0,,,,,,Y,11
 1938,"Ginobili, Manu",Manu Ginobili,0,2002,2017,manu_ginobili,manu_ginobili,0,,,,,,Y,00
 1921,"Giricek, Gordan",Gordan Giricek,0,2002,2007,gordan_giricek,gordan_giricek,0,,,,,,Y,00
 76819,"Givens, Jack",Jack Givens,0,1978,1979,HISTADD_goose_givens,jack_givens,0,,,,,,Y,00
@@ -1698,7 +1699,7 @@ person_id,display_last_comma_first,display_first_last,rosterstatus,from_year,to_
 76911,"Haffner, Scott",Scott Haffner,0,1989,1990,HISTADD_scott_haffner,scott_haffner,0,,,,,,Y,00
 76912,"Hagan, Cliff",Cliff Hagan,0,1956,1965,HISTADD_cliff_hagan,cliff_hagan,0,,,,,,Y,00
 76913,"Hagan, Glenn",Glenn Hagan,0,1981,1981,HISTADD_glenn_hagan,glenn_hagan,0,,,,,,Y,00
-1630204,"Hagans, Ashton",Ashton Hagans,0,2020,2023,ashton_hagans,ashton_hagans,0,,,,,,Y,11
+1630204,"Hagans, Ashton",Ashton Hagans,1,2020,2023,ashton_hagans,ashton_hagans,1610612757,Portland,Trail Blazers,POR,blazers,blazers,Y,11
 76914,"Hahn, Bob",Bob Hahn,0,1949,1949,HISTADD_bob_hahn,bob_hahn,0,,,,,,Y,00
 76915,"Hairston, Al",Al Hairston,0,1968,1969,HISTADD_al_hairston,al_hairston,0,,,,,,Y,00
 76916,"Hairston, Happy",Happy Hairston,0,1964,1974,HISTADD_happy_hairston,happy_hairston,0,,,,,,Y,00
@@ -2938,7 +2939,7 @@ person_id,display_last_comma_first,display_first_last,rosterstatus,from_year,to_
 77579,"Mencel, Chuck",Chuck Mencel,0,1955,1956,HISTADD_chuck_mencel,chuck_mencel,0,,,,,,Y,00
 77580,"Mengelt, John",John Mengelt,0,1971,1980,HISTADD_crash_mengelt,john_mengelt,0,,,,,,Y,00
 77581,"Menke, Ken",Ken Menke,0,1949,1949,HISTADD_angles_menke,ken_menke,0,,,,,,Y,00
-1641877,"Mensah, Nathan",Nathan Mensah,1,2023,2023,nathan_mensah,nathan_mensah,1610612766,Charlotte,Hornets,CHA,hornets,hornets,Y,00
+1641877,"Mensah, Nathan",Nathan Mensah,1,2023,2023,nathan_mensah,nathan_mensah,1610612766,Charlotte,Hornets,CHA,hornets,hornets,Y,11
 200822,"Mensah-Bonsu, Pops",Pops Mensah-Bonsu,0,2006,2010,pops_mensah-bonsu,pops_mensah-bonsu,0,,,,,,Y,01
 1500,"Mercer, Ron",Ron Mercer,0,1997,2004,ron_mercer,ron_mercer,0,,,,,,Y,00
 77582,"Meriweather, Joe",Joe Meriweather,0,1975,1984,HISTADD_joe_meriweather,joe_meriweather,0,,,,,,Y,00
@@ -3481,7 +3482,7 @@ person_id,display_last_comma_first,display_first_last,rosterstatus,from_year,to_
 1641764,"Podziemski, Brandin",Brandin Podziemski,1,2023,2023,brandon_podziemski,brandin_podziemski,1610612744,Golden State,Warriors,GSW,warriors,warriors,Y,00
 1627751,"Poeltl, Jakob",Jakob Poeltl,1,2016,2023,jakob_poeltl,jakob_poeltl,1610612761,Toronto,Raptors,TOR,raptors,raptors,Y,01
 1629738,"Poirier, Vincent",Vincent Poirier,0,2019,2020,vincent_poirier,vincent_poirier,0,,,,,,Y,01
-1630197,"Pokusevski, Aleksej",Aleksej Pokusevski,1,2020,2023,aleksej_pokusevski,aleksej_pokusevski,1610612760,Oklahoma City,Thunder,OKC,thunder,thunder,Y,01
+1630197,"Pokusevski, Aleksej",Aleksej Pokusevski,0,2020,2023,aleksej_pokusevski,aleksej_pokusevski,0,,,,,,Y,01
 77866,"Polee, Dwayne",Dwayne Polee,0,1986,1986,HISTADD_dwayne_polee,dwayne_polee,0,,,,,,Y,00
 77867,"Pollard, Jim",Jim Pollard,0,1948,1954,HISTADD_jim_pollard,jim_pollard,0,,,,,,Y,00
 1513,"Pollard, Scot",Scot Pollard,0,1997,2007,scot_pollard,scot_pollard,0,,,,,,Y,00
@@ -4709,7 +4710,7 @@ person_id,display_last_comma_first,display_first_last,rosterstatus,from_year,to_
 78540,"Williams, Bernie",Bernie Williams,0,1969,1970,HISTADD_bernie_williams,bernie_williams,0,,,,,,Y,00
 78564,"Williams, Bob",Bob Williams,0,1955,1956,HISTADD_bob_williams,bob_williams,0,,,,,,Y,00
 1585,"Williams, Brandon",Brandon Williams,0,1997,2002,brandon_williams,brandon_williams,0,,,,,,Y,00
-1630314,"Williams, Brandon",Brandon Williams,1,2021,2023,brandon_williams,brandon_williams,1610612742,Dallas,Mavericks,DAL,mavericks,mavericks,Y,01
+1630314,"Williams, Brandon",Brandon Williams,1,2021,2023,brandon_williams,brandon_williams,1610612742,Dallas,Mavericks,DAL,mavericks,mavericks,Y,11
 433,"Williams, Buck",Buck Williams,0,1981,1997,buck_williams,buck_williams,0,,,,,,Y,00
 203710,"Williams, C.J.",C.J. Williams,0,2017,2018,c.j._williams,cj_williams,0,,,,,,Y,01
 78547,"Williams, Chuck",Chuck Williams,0,1976,1977,HISTADD_chuck_williams,chuck_williams,0,,,,,,Y,00

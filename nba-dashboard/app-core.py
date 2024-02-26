@@ -12,10 +12,10 @@ import plotly.figure_factory as ff
 # Load data
 app_dir = Path(__file__).parent
 players_df = pd.read_csv(app_dir / "players.csv", dtype={"person_id": str})
-careers = pd.read_csv(app_dir / "careers.csv", dtype={"person_id": str})
+careers_df = pd.read_csv(app_dir / "careers.csv", dtype={"person_id": str})
 
 # Define the stats to compare
-stats = careers.columns[1:].tolist()
+stats = ["PTS", "FG_PCT", "FG3_PCT", "FT_PCT", "REB", "AST", "STL", "BLK"]
 
 # create dictionary where key is player id and value is name
 players_dict = dict(zip(
@@ -23,19 +23,40 @@ players_dict = dict(zip(
     players_df["display_first_last"]
 ))
 
-careers["player_name"] = careers["person_id"].map(players_dict)
+careers_df["player_name"] = careers_df["person_id"].map(players_dict)
+
+from_start = players_df["from_year"].min()
+to_end = players_df["to_year"].max()
+gp_max = careers_df["GP"].max()
 
 # Define the app UI
-app_ui = ui.page_fixed(
-    ui.panel_title("NBA Player Stats"),
-    ui.input_selectize(
-        "players",
-        "Search for players",
-        multiple=True,
-        choices=players_dict,
-        selected=["893", "2544", "201939"],
-        width="100%"
+app_ui = ui.page_sidebar(
+    ui.sidebar(
+        ui.input_selectize(
+            "players",
+            "Search for players",
+            multiple=True,
+            choices=players_dict,
+            selected=["893", "2544", "201939"],
+            width="100%"
+        ),
+        ui.input_slider(
+            "games", "Career games played",
+            value=[300, gp_max],
+            min=0, max=gp_max,
+            step=1, sep=""
+        ),
+        ui.input_slider(
+            "seasons", "Career within years",
+            value=[from_start, to_end],
+            min=from_start, max=to_end,
+            step=1, sep=""
+        )
     ),
+    # TODO: add filters for:
+    # * position
+    # * team
+    # * various stats
     ui.card(
         ui.card_header("Player career comparison"),
         output_widget("career_compare"),
@@ -65,12 +86,32 @@ app_ui = ui.page_fixed(
 
 
 def server(input, output, session):
+    
+    # Filter the careers data based on the selected games and seasons
+    @reactive.calc
+    def careers():
+        games = input.games()
+        seasons = input.seasons()
+        idx = (
+            (careers_df["GP"] >= games[0]) &
+            (careers_df["GP"] <= games[1]) &
+            (careers_df["from_year"] >= seasons[0]) &
+            (careers_df["to_year"] <= seasons[1])
+        )
+        return careers_df[idx]
+
+    # Update available players when careers data changes
+    @reactive.effect
+    def _():
+        players = dict(zip(careers()["person_id"], careers()["player_name"]))
+        ui.update_selectize("players", choices=players, selected=input.players())
 
     # Get the stats for the selected players
     @reactive.calc
     def player_stats():
         players = req(input.players())
-        res = careers[careers["person_id"].isin(players)]
+        res = careers()
+        res = res[res["person_id"].isin(players)]
         res["color"] = np.resize(px.colors.qualitative.D3, len(players))
         return res
 
@@ -81,7 +122,7 @@ def server(input, output, session):
 
         def apply_func(x):
             for col in stats:
-                x[col] = (x[col].values > careers[col].values).mean()
+                x[col] = (x[col].values > careers()[col].values).mean()
             return x
 
         return d.groupby("person_id").apply(apply_func)
@@ -114,7 +155,7 @@ def server(input, output, session):
             showlegend=True,
             legend=dict(
                 orientation="h",
-                y=-0.05, yanchor="top",
+                y=-0.1, yanchor="top",
                 x=0.5, xanchor="center"
             )
         )
@@ -124,18 +165,18 @@ def server(input, output, session):
     # 1D density plot of player stats
     @render_plotly
     def stat_compare():
-        vals = careers[input.stat()]
+        vals = careers()[input.stat()]
         vals = vals[~vals.isnull()]
         fig = ff.create_distplot(
             [vals], ["Overall"],
-            rug_text=[careers["player_name"]],
+            rug_text=[careers()["player_name"]],
             colors=["black"], show_hist=False,
         )
         # Clean up some defaults (1st trace is the density plot, 2nd is the rug plot)
         fig.data[0].hoverinfo = "none"
         fig.data[0].showlegend = False
         fig.data[1].hoverinfo = "text+x"
-        fig.data[1].customdata = careers["person_id"]
+        fig.data[1].customdata = careers()["person_id"]
         # Use height of the density plot to inform the vertical lines
         ymax = fig.data[0].y.max()
         # Arrange rows from highest to lowest value so that legend order is correct
@@ -158,7 +199,7 @@ def server(input, output, session):
             ),
             legend=dict(
                 orientation="h",
-                y=1.01, yanchor="bottom",
+                y=1.03, yanchor="bottom",
                 x=0.5, xanchor="center"
             )
         )
