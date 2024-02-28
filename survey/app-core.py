@@ -1,8 +1,9 @@
-import pandas as pd
 from pathlib import Path
-from shiny import Inputs, Outputs, Session, App, reactive, ui
-from shiny_validate import InputValidator, check
 
+import pandas as pd
+from shared import INPUTS
+from shiny import App, Inputs, Outputs, Session, reactive, ui
+from shiny_validate import InputValidator, check
 
 app_dir = Path(__file__).parent
 
@@ -11,61 +12,42 @@ app_ui = ui.page_fixed(
     ui.panel_title("Movie survey"),
     ui.card(
         ui.card_header("Demographics"),
-        ui.input_text("name", "Enter your name"),
-        ui.input_select(
-            "country", "Country",
-            choices=["", "USA", "Canada", "Portugal"],
-        ),
-        ui.input_numeric("age", "Age", None, min=0, max=120, step=1),
+        INPUTS["name"],
+        INPUTS["country"],
+        INPUTS["age"],
     ),
     ui.card(
         ui.card_header("Income"),
-        ui.input_numeric("income", "Annual income", None, step=1000),
+        INPUTS["income"],
     ),
     ui.card(
         ui.card_header("Ratings"),
-        # TODO: Can we get rid of the no response option??
-        ui.input_radio_buttons(
-            "avengers",
-            "How would you rate: 'Avengers'?",
-            choices=["No response", 1, 2, 3, 4, 5],
-            inline=True,
-        ),
-        ui.input_radio_buttons(
-            "spotlight",
-            "How would you rate: 'Spotlight'?",
-            choices=["No response", 1, 2, 3, 4, 5],
-            inline=True,
-        ),
-        ui.input_radio_buttons(
-            "the_big_short",
-            "How would you rate: 'The Big Short'?",
-            choices=["No response", 1, 2, 3, 4, 5],
-            inline=True,
-        ),
+        INPUTS["avengers"],
+        INPUTS["spotlight"],
+        INPUTS["the_big_short"],
     ),
-    ui.input_action_button("submit", "Submit", class_="btn btn-primary")
+    ui.div(
+        ui.input_action_button("submit", "Submit", class_="btn btn-primary"),
+        class_="d-flex justify-content-end",
+    ),
 )
 
 
 def server(input: Inputs, output: Outputs, session: Session):
-    
-    iv = InputValidator()
-
-    iv.add_rule("name", check.required())
-    iv.add_rule("country", check.required())
-    iv.add_rule("age", check.required())
-    iv.add_rule("income", check.required())
+    input_validator = InputValidator()
+    input_validator.add_rule("name", check.required())
+    input_validator.add_rule("country", check.required())
+    input_validator.add_rule("age", check.required())
+    input_validator.add_rule("income", check.required())
 
     @reactive.effect
     @reactive.event(input.submit)
     def save_to_csv():
-        iv.enable()
-        if not iv.is_valid():
+        input_validator.enable()
+        if not input_validator.is_valid():
             return
 
-        all_ids = ["name", "country", "age", "income", "avengers", "spotlight", "the_big_short"]
-        df = pd.DataFrame([{k: input[k]() for k in all_ids}])
+        df = pd.DataFrame([{k: input[k]() for k in INPUTS.keys()}])
 
         responses = app_dir / "responses.csv"
         if not responses.exists():
@@ -73,9 +55,7 @@ def server(input: Inputs, output: Outputs, session: Session):
         else:
             df.to_csv(responses, mode="a", header=False)
 
-        ui.modal_show(
-            ui.modal("Form submitted, thank you!")
-        )
+        ui.modal_show(ui.modal("Form submitted, thank you!"))
 
 
 app = App(app_ui, server)

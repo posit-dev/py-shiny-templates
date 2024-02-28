@@ -1,13 +1,9 @@
-from faicons import icon_svg
-from geopy.distance import great_circle, geodesic
 import ipyleaflet as L
-import requests
-
-from shiny import App, ui, reactive, render
-from shinywidgets import render_widget, output_widget
-
-from cities import CITIES
-from basemaps import BASEMAPS
+from faicons import icon_svg
+from geopy.distance import geodesic, great_circle
+from shared import BASEMAPS, CITIES
+from shiny import App, reactive, render, ui
+from shinywidgets import output_widget, render_widget
 
 city_names = sorted(list(CITIES.keys()))
 
@@ -16,13 +12,13 @@ app_ui = ui.page_sidebar(
         ui.input_selectize(
             "loc1", "Location 1", choices=city_names, selected="New York"
         ),
+        ui.input_selectize("loc2", "Location 2", choices=city_names, selected="London"),
         ui.input_selectize(
-            "loc2", "Location 2", choices=city_names, selected="London"
+            "basemap",
+            "Choose a basemap",
+            choices=list(BASEMAPS.keys()),
+            selected="WorldImagery",
         ),
-        ui.input_selectize(
-            "basemap", "Choose a basemap", choices=list(BASEMAPS.keys()),
-            selected="WorldImagery"
-        )
     ),
     ui.layout_column_wrap(
         ui.value_box(
@@ -47,7 +43,7 @@ app_ui = ui.page_sidebar(
     ),
     ui.card(
         ui.card_header("Map (drag the markers to change locations)"),
-        output_widget("map")
+        output_widget("map"),
     ),
     title="Location Distance Calculator",
     fillable=True,
@@ -55,20 +51,15 @@ app_ui = ui.page_sidebar(
 
 
 def server(input, output, session):
-    
     # Reactive values to store location information
     loc1 = reactive.value()
     loc2 = reactive.value()
-    
+
     # Update the reactive values when the selectize inputs change
     @reactive.effect
     def _():
-        loc1.set(
-            CITIES.get(input.loc1(), loc_str_to_coords(input.loc1()))
-        )
-        loc2.set(
-            CITIES.get(input.loc2(), loc_str_to_coords(input.loc2()))
-        )
+        loc1.set(CITIES.get(input.loc1(), loc_str_to_coords(input.loc1())))
+        loc2.set(CITIES.get(input.loc2(), loc_str_to_coords(input.loc2())))
 
     # When a marker is moved, the input value gets updated to "lat, lon",
     # so we decode that into a dict (and also look up the altitude)
@@ -76,19 +67,23 @@ def server(input, output, session):
         latlon = x.split(", ")
         if len(latlon) != 2:
             return {}
-        
+
         lat = float(latlon[0])
         lon = float(latlon[1])
 
         try:
-            query = f'https://api.open-elevation.com/api/v1/lookup?locations={lat},{lon}'
+            import requests
+
+            query = (
+                f"https://api.open-elevation.com/api/v1/lookup?locations={lat},{lon}"
+            )
             r = requests.get(query).json()
             altitude = r["results"][0]["elevation"]
         except Exception:
             altitude = None
 
         return {"latitude": lat, "longitude": lon, "altitude": altitude}
-    
+
     # Convenient way to get the lat/lons as a tuple
     @reactive.calc
     def loc1xy():
@@ -105,12 +100,12 @@ def server(input, output, session):
         return f"{circle.kilometers.__round__(1)} km"
 
     # Geodesic distance value box
-    @render.text()
+    @render.text
     def geo_dist():
         dist = geodesic(loc1xy(), loc2xy())
         return f"{dist.kilometers.__round__(1)} km"
 
-    @render.text()
+    @render.text
     def altitude():
         try:
             return f'{loc1()["altitude"] - loc2()["altitude"]} m'
@@ -155,8 +150,10 @@ def server(input, output, session):
         if len(b) == 0:
             map.widget.fit_bounds(new_bounds)
         elif (
-          lat_rng[0] < b[0][0] or lat_rng[1] > b[1][0] or
-          lon_rng[0] < b[0][1] or lon_rng[1] > b[1][1]
+            lat_rng[0] < b[0][0]
+            or lat_rng[1] > b[1][0]
+            or lon_rng[0] < b[0][1]
+            or lon_rng[1] > b[1][1]
         ):
             map.widget.fit_bounds(new_bounds)
 
@@ -164,7 +161,7 @@ def server(input, output, session):
     @reactive.effect
     def _():
         update_basemap(map.widget, input.basemap())
-    
+
     # ---------------------------------------------------------------
     # Helper functions
     # ---------------------------------------------------------------
@@ -184,15 +181,13 @@ def server(input, output, session):
         for layer in map.layers:
             if isinstance(layer, L.TileLayer):
                 map.remove_layer(layer)
-        map.add_layer(
-            L.basemap_to_tiles(BASEMAPS[input.basemap()])
-        )
+        map.add_layer(L.basemap_to_tiles(BASEMAPS[input.basemap()]))
 
     def remove_layer(map: L.Map, name: str):
         for layer in map.layers:
             if layer.name == name:
                 map.remove_layer(layer)
-        
+
     def on_move1(**kwargs):
         return on_move("loc1", **kwargs)
 

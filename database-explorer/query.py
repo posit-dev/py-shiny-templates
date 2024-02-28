@@ -1,5 +1,4 @@
 import duckdb
-
 from shiny import module, reactive, render, ui
 
 
@@ -26,7 +25,7 @@ def query_output_ui(remove_id, qry="SELECT * from weather LIMIT 10"):
                     ),
                 ],
                 ui.output_data_frame("results"),
-                col_widths={"xl": [3, 9], "lg": [4, 8], "md": [6, 6], "sm": [12, 12]}
+                col_widths={"xl": [3, 9], "lg": [4, 8], "md": [6, 6], "sm": [12, 12]},
             ),
         ),
     )

@@ -1,84 +1,58 @@
 # By Chelsea Parlett Pelleriti
-from pathlib import Path
 import matplotlib.pyplot as plt
 
 # Import modules for modeling
 import pandas as pd
 import seaborn as sns
-
-# Import custom Python Functions from local file
 from compare import compare, sim_data
+
+# Import helper functions from local modules
+from shared import mathjax, prose, restrict_width
 from shiny import App, reactive, render, ui
-
-app_dir = Path(__file__).parent
-
-
-# Helper function to restrict width of content
-def restrict_width(*args, sm=None, md=None, lg=None, pad_y=5, **kwargs):
-    cls = "mx-auto"
-    if sm:
-        cls += f" col-sm-{sm}"
-    if md:
-        cls += f" col-md-{md}"
-    if lg:
-        cls += f" col-lg-{lg}"
-    
-    return ui.div(
-        *args,
-        {"class": cls},
-        {"class": f"py-{pad_y}"},
-        **kwargs
-    )
-
 
 # Define the UI
 app_ui = ui.page_fixed(
-    # Allow LaTeX to be displayed via MathJax
-    ui.head_content(
-        ui.tags.script(
-            src="https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"
-        ),
-        ui.tags.script(
-            "if (window.MathJax) MathJax.Hub.Queue(['Typeset', MathJax.Hub]);"
-        ),
-    ),
-    # Title
+    mathjax,
     restrict_width(
         ui.h1(
             "How Does Regularization Strength Affect Coefficient Estimates?",
-            class_="text-lg-center text-left"
+            class_="text-lg-center text-left",
         ),
-        sm=10, md=10, lg=8,
+        sm=10,
+        md=10,
+        lg=8,
     ),
-    # Lead in
     restrict_width(
         ui.input_slider(
-            "a", "Select a Regularization Strength:",
-            0.000000001, 1, 0.1,
-            step=0.01, width="100%",
+            "a",
+            "Select a Regularization Strength:",
+            0.000000001,
+            1,
+            0.1,
+            step=0.01,
+            width="100%",
         ),
         ui.p(
             {"class": "pt-4 small"},
             "(Notice how, as the strength increases, lasso coefficients approach 0)",
         ),
-        sm=10, md=7, lg=5, pad_y=4,
+        sm=10,
+        md=7,
+        lg=5,
+        pad_y=4,
     ),
-    # Plot
     restrict_width(ui.output_plot("plot"), lg=11),
     # Explanation and Explore prose
+    restrict_width(prose, sm=10, md=10, lg=6),
     restrict_width(
-        ui.markdown(open(app_dir / "prose.md").read()),
-        sm=10, md=10, lg=6
-    ),
-    restrict_width(
-        ui.h2("Plots Separated by Vowels and Consonants", class_="text-center"),
-        lg=11
+        ui.h2("Plots Separated by Vowels and Consonants", class_="text-center"), lg=11
     ),
     # output plots separated by real effects (vowels), and zero-effects (consonants)
     restrict_width(
         ui.output_plot("plotVOWELS"),
         ui.output_plot("plotCONSONANTS"),
-        lg=11, pad_y=0,
+        lg=11,
+        pad_y=0,
     ),
     ui.div(class_="pb-5"),  # add padding to bottom of page
 )
@@ -111,7 +85,22 @@ def server(input, output, session):
             hue="model",
             data=sim_alpha,
             ax=ax,
-            order=["A", "E", "I", "O", "U", "Y", "W", "B", "C", "D", "G", "H", "J", "K"],
+            order=[
+                "A",
+                "E",
+                "I",
+                "O",
+                "U",
+                "Y",
+                "W",
+                "B",
+                "C",
+                "D",
+                "G",
+                "H",
+                "J",
+                "K",
+            ],
         )
         tt = "Coefficient Estimates when alpha = " + str(input.a())
         ax2.set(xlabel="", ylabel="Coefficient Value", title=tt)

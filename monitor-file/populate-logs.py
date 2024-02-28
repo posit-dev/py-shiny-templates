@@ -1,9 +1,9 @@
-import pandas as pd
+import random
+import time
 from datetime import datetime
 from pathlib import Path
 
-import random
-import time
+import pandas as pd
 
 log_path = Path(__file__).parent / "logs.csv"
 

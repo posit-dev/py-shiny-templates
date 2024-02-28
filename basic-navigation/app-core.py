@@ -1,20 +1,17 @@
-from pathlib import Path
-import pandas as pd
 import seaborn as sns
-from shiny import App, render, ui
 
-app_dir = Path(__file__).parent
-dat = pd.read_csv(app_dir / "penguins.csv")
+# Import data from shared.py
+from shared import df
+from shiny import App, render, ui
 
 # The contents of the first 'page' is a navset with two 'panels'.
 page1 = ui.navset_card_underline(
     ui.nav_panel("Plot", ui.output_plot("hist")),
     ui.nav_panel("Table", ui.output_data_frame("data")),
     footer=ui.input_select(
-        "var", "Select variable",
-        choices=["bill_length_mm", "body_mass_g"]
+        "var", "Select variable", choices=["bill_length_mm", "body_mass_g"]
     ),
-    title="Penguins data"
+    title="Penguins data",
 )
 
 app_ui = ui.page_navbar(
@@ -28,11 +25,12 @@ app_ui = ui.page_navbar(
 def server(input, output, session):
     @render.plot
     def hist():
-        return sns.histplot(dat, x=input.var()).set(xlabel=None)
-    
+        p = sns.histplot(df, x=input.var(), color="#007bc2", edgecolor="white")
+        return p.set(xlabel=None)
+
     @render.data_frame
     def data():
-        return dat[["species", "island", input.var()]]
+        return df[["species", "island", input.var()]]
 
 
 app = App(app_ui, server)

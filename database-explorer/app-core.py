@@ -3,7 +3,6 @@ from pathlib import Path
 
 import duckdb
 from query import query_output_server, query_output_ui
-
 from shiny import App, reactive, ui
 
 app_dir = Path(__file__).parent
@@ -45,7 +44,7 @@ app_ui = ui.page_sidebar(
         query_output_ui("initial_query", remove_id="initial_query"),
         id="module_container",
     ),
-    title="DuckDB query explorer"
+    title="DuckDB query explorer",
 )
 
 

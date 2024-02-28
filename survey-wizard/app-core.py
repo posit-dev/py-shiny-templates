@@ -1,8 +1,9 @@
-from shiny import App, reactive, render, ui
-from shiny_validate import InputValidator, check
 from pathlib import Path
 
-# Define the wizard steps 
+from shiny import App, reactive, render, ui
+from shiny_validate import InputValidator, check
+
+# Define the wizard steps
 # "title" is the title of the step
 # "contents" is any collection of Shiny UI/inputs
 # "input_checks" is a list of tuples (each tuple defines a rule for the InputValidator.add_rule() )
@@ -13,9 +14,7 @@ STEPS = [
             ui.input_text("name", "Name"),
             ui.input_text("email", "Email (Optional)"),
         ],
-        "input_checks": [
-            ("name", check.required())
-        ]
+        "input_checks": [("name", check.required())],
     },
     {
         "title": "Demographics",
@@ -23,10 +22,8 @@ STEPS = [
             ui.input_numeric("age", "Age", None),
             ui.input_numeric("income", "Income (Optional)", None, step=1000),
         ],
-        "input_checks": [
-            ("age", check.required())
-        ]
-    }
+        "input_checks": [("age", check.required())],
+    },
 ]
 
 app_ui = ui.page_fixed(
@@ -38,22 +35,17 @@ app_ui = ui.page_fixed(
         ui.card_header(ui.output_text("title")),
         ui.navset_hidden(
             *[
-              ui.nav_panel(
-                  step["title"],
-                  *step["contents"],
-                  value=str(i)
-              )
-              for i, step in enumerate(STEPS)
+                ui.nav_panel(step["title"], *step["contents"], value=str(i))
+                for i, step in enumerate(STEPS)
             ],
-            id="tabs"
-        )
+            id="tabs",
+        ),
     ),
     # Action buttons provide navigation between steps
     # (conditional panels are used to show/hide the buttons when appropriate)
     ui.div(
         ui.panel_conditional(
-            "input.tabs !== '0'",
-            ui.input_action_button("prev", "Previous")
+            "input.tabs !== '0'", ui.input_action_button("prev", "Previous")
         ),
         ui.panel_conditional(
             f"input.tabs !== '{len(STEPS)-1}'",
@@ -63,13 +55,12 @@ app_ui = ui.page_fixed(
             f"input.tabs === '{len(STEPS)-1}'",
             ui.input_action_button("submit", "Submit", class_="btn btn-primary"),
         ),
-        class_="d-flex justify-content-end gap-3"
-    )
+        class_="d-flex justify-content-end gap-3",
+    ),
 )
 
 
 def server(input, output, session):
-    
     # Update card title to reflect the current step
     @render.text
     def title():
@@ -82,7 +73,7 @@ def server(input, output, session):
         for chk in step["input_checks"]:
             v.add_rule(chk[0], chk[1])
         validators.append(v)
-    
+
     # When next is pressed, first validate the current step,
     # then move to the next step
     @reactive.effect
@@ -106,9 +97,7 @@ def server(input, output, session):
     @reactive.effect
     @reactive.event(input.submit)
     def _():
-        ui.modal_show(
-            ui.modal("Form submitted, thank you!")
-        )
+        ui.modal_show(ui.modal("Form submitted, thank you!"))
 
 
 app = App(app_ui, server)

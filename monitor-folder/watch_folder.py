@@ -1,6 +1,6 @@
+import sys
 from datetime import datetime
 from pathlib import Path
-import sys
 
 from watchfiles import run_process
 

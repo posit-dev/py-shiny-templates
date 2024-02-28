@@ -1,12 +1,24 @@
-# About
+# Shiny for Python Templates
 
-This repository hosts Shiny for Python template files which can be initiated with `shiny create`.
+This repository hosts source files behind [Shiny for Python templates](https://shiny.posit.co/py/templates).
 
-# Requirments
+## Installation
 
-Each template should be in its own folder. If there is only a core template the top-level app file should be `app-core.py`.
-If the template supports both express and classic, they should be called `app-core.py` and `app-express.py`.
-All other files in the directory should work regardless of which top level app file is chosen. Each template should include a `requirements.txt` file.
+To install dependencies for _every_ template, run:
+
+```bash
+make install
+```
+
+To install dependencies for a specific template, use the `requirements.txt` file in the template's directory. For example:
+
+```bash
+pip install -r templates/basic-app-plot/requirements.txt
+```
+
+## Running
+
+
 
 # Deployment
 

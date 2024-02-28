@@ -2,9 +2,18 @@ body {
   background-color: #dceaf5;
 
   > .container {
-    max-width: 475px !important;
+    max-width: 550px !important;
     margin-left: auto !important;
     margin-right: auto !important;
+    padding-top: 3rem;
+    padding-bottom: 5rem;
+  }
+  .card-header, .card-body, .card-footer {
+    padding-right: 1.75rem;
+    padding-left: 1.75rem;
+  }
+  .card  {
+    padding-bottom: 1rem;
   }
 }
 

@@ -1,20 +1,18 @@
-from pathlib import Path
-import pandas as pd
 import seaborn as sns
+
+# Import data from shared.py
+from shared import df
 from shiny.express import input, render, ui
 
-app_dir = Path(__file__).parent
-dat = pd.read_csv(app_dir / "penguins.csv")
-
-ui.page_opts(title="Basic Shiny app")
+# Page title (with some additional top padding)
+ui.page_opts(title=ui.h2("Basic Shiny app", class_="pt-5"))
 
 
+# Render a histogram of the selected variable (input.var())
 @render.plot
 def hist():
-    return sns.histplot(dat, x=input.var()).set(xlabel=None)
+    p = sns.histplot(df, x=input.var(), color="#007bc2", edgecolor="white")
+    return p.set(xlabel=None)
 
-
-ui.input_select(
-    "var", "Select variable",
-    choices=["bill_length_mm", "body_mass_g"]
-)
+# Select input for choosing the variable to plot
+ui.input_select("var", "Select variable", choices=["bill_length_mm", "body_mass_g"])

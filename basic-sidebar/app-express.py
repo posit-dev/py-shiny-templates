@@ -1,24 +1,20 @@
-from pathlib import Path
-import pandas as pd
 import seaborn as sns
-from shiny.express import input, render, ui
 
-app_dir = Path(__file__).parent
-dat = pd.read_csv(app_dir / "penguins.csv")
+# Import data from shared.py
+from shared import df
+from shiny.express import input, render, ui
 
 ui.page_opts(title="Hello sidebar!")
 
 with ui.sidebar():
-    ui.input_select(
-        "var", "Select variable",
-        choices=["bill_length_mm", "body_mass_g"]
-    )
-    ui.input_switch("show_kde", "Show KDE", value=True)
+    ui.input_select("var", "Select variable", choices=["bill_length_mm", "body_mass_g"])
+    ui.input_switch("species", "Group by species", value=True)
     ui.input_switch("show_rug", "Show Rug", value=True)
 
 
 @render.plot
 def hist():
-    sns.histplot(dat, x=input.var(), kde=input.show_kde())
+    hue = "species" if input.species() else None
+    sns.kdeplot(df, x=input.var(), hue=hue, color="#007bc2")
     if input.show_rug():
-        sns.rugplot(dat[input.var()], alpha=0.25)
+        sns.rugplot(df, x=input.var(), hue=hue, color="black", alpha=0.25)

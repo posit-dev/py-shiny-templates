@@ -1,21 +1,22 @@
-from pathlib import Path
-
-import pandas as pd
 import seaborn as sns
 from faicons import icon_svg
 
+# Import data from shared.py
+from shared import app_dir, df
 from shiny import reactive
 from shiny.express import input, render, ui
 
-app_dir = Path(__file__).parent
-df = pd.read_csv(app_dir / "penguins.csv", na_values="NA")
-species = ["Adelie", "Gentoo", "Chinstrap"]
-
 ui.page_opts(title="Penguins dashboard", fillable=True)
+
 
 with ui.sidebar(title="Filter controls"):
     ui.input_slider("mass", "Mass", 2000, 6000, 6000)
-    ui.input_checkbox_group("species", "Species", species, selected=species)
+    ui.input_checkbox_group(
+        "species",
+        "Species",
+        ["Adelie", "Gentoo", "Chinstrap"],
+        selected=["Adelie", "Gentoo", "Chinstrap"],
+    )
 
 
 with ui.layout_column_wrap(fill=False):
@@ -67,6 +68,9 @@ with ui.layout_columns():
                 "body_mass_g",
             ]
             return render.DataGrid(filtered_df()[cols], filters=True)
+
+
+ui.include_css(app_dir / "styles.css")
 
 
 @reactive.calc

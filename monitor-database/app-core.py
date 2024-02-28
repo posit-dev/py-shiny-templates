@@ -1,149 +1,76 @@
 from __future__ import annotations
 
-import sqlite3
+from shared import df, plot_timeseries, value_box_server, value_box_ui
+from shiny import App, Inputs, Outputs, Session, reactive, ui
+from shinywidgets import output_widget, render_plotly
 
-import pandas as pd
-import plotly.express as px
-import scoredata
-from shinywidgets import output_widget, render_widget
-from faicons import icon_svg
-
-from shiny import App, Inputs, Outputs, Session, reactive, render, ui
-
-THRESHOLD_MID = 0.85
-THRESHOLD_MID_COLOR = "rgb(0, 137, 26)"
-THRESHOLD_LOW = 0.5
-THRESHOLD_LOW_COLOR = "rgb(193, 0, 0)"
-
-# This starts a background process to add records to a database after a random interval
-# You should replace it with a connection to your actual database.
-scoredata.begin()
-
-con = sqlite3.connect(scoredata.SQLITE_DB_URI, uri=True)
-
-
-def last_modified(con):
-    """
-    Fast-executing call to get the timestamp of the most recent row in the database.
-    We will poll against this in absence of a way to receive a push notification when
-    our SQLite database changes.
-    """
-    return con.execute("select max(timestamp) from accuracy_scores").fetchone()[0]
-
-
-@reactive.poll(lambda: last_modified(con))
-def df():
-    """
-    @reactive.poll calls a cheap query (`last_modified()`) every 1 second to check if
-    the expensive query (`df()`) should be run and downstream calculations should be
-    updated.
-
-    By declaring this reactive object at the top-level of the script instead of in the
-    server function, all sessions are sharing the same object, so the expensive query is
-    only run once no matter how many users are connected.
-    """
-    tbl = pd.read_sql(
-        "select * from accuracy_scores order by timestamp desc, model desc limit ?",
-        con,
-        params=[150],
-    )
-    # Convert timestamp to datetime object, which SQLite doesn't support natively
-    tbl["timestamp"] = pd.to_datetime(tbl["timestamp"], utc=True)
-    # Create a short label for readability
-    tbl["time"] = tbl["timestamp"].dt.strftime("%H:%M:%S")
-    # Reverse order of rows
-    tbl = tbl.iloc[::-1]
-
-    return tbl
-
-
-model_names = ["model_1", "model_2", "model_3", "model_4"]
-model_colors = {
-    name: color
-    for name, color in zip(model_names, px.colors.qualitative.D3[0 : len(model_names)])
-}
-
-
-def make_value_box(model, score):
-    theme = "text-success"
-    icon = icon_svg("check")
-    if score < THRESHOLD_MID:
-        theme = "text-warning"
-        icon = icon_svg("triangle-exclamation")
-    if score < THRESHOLD_LOW:
-        theme = "bg-danger"
-        icon = icon_svg("circle-exclamation")
-
-    return ui.value_box(model, ui.h2(score), theme=theme, showcase=icon)
-
+all_models = ["model_1", "model_2", "model_3", "model_4"]
 
 app_ui = ui.page_sidebar(
     ui.sidebar(
-        ui.input_checkbox_group("models", "Models", model_names, selected=model_names),
+        ui.input_checkbox_group("models", "Models", all_models, selected=all_models)
     ),
-    ui.output_ui("value_boxes"),
-    ui.card(output_widget("plot_timeseries")),
+    ui.layout_columns(
+        value_box_ui("model_1", "Model 1"),
+        value_box_ui("model_2", "Model 2"),
+        value_box_ui("model_3", "Model 3"),
+        value_box_ui("model_4", "Model 4"),
+        fill=False,
+        id="value-boxes",
+    ),
+    ui.card(
+        ui.card_header(
+            "Model accuracy over time",
+            ui.input_switch("pause", "Pause updates", value=False, width="auto"),
+            class_="d-flex justify-content-between",
+        ),
+        output_widget("plot", height=500),
+        full_screen=True,
+    ),
     title="Model monitoring dashboard",
-    fillable=True
 )
 
 
 def server(input: Inputs, output: Outputs, session: Session):
+    # Note that df from shared.py is a reactive calc that gets
+    # invalidated (approximately) when the database updates
+    # We can choose to ignore the invalidation by doing an isolated read
     @reactive.calc
-    def filtered_df():
-        """
-        Return the data frame that should be displayed in the app, based on the user's
-        input. This will be either the latest rows, or a specific time range. Also
-        filter out rows for models that the user has deselected.
-        """
-        data = df()
+    def maybe_paused_df():
+        if not input.pause():
+            return df()
+        with reactive.isolate():
+            return df()
 
-        # Filter the rows so we only include the desired models
-        return data[data["model"].isin(input.models())]
+    # Source the value box module server code for each model
+    for model in all_models:
+        value_box_server(model, maybe_paused_df, model)
 
-    @reactive.calc
-    def filtered_model_names():
-        return filtered_df()["model"].unique()
+    @render_plotly
+    def plot():
+        d = maybe_paused_df()
+        d = d[d["model"].isin(input.models())]
+        return plot_timeseries(d)
 
-    @output
-    @render.ui
-    def value_boxes():
-        data = filtered_df()
-        models = data["model"].unique().tolist()
-        scores_by_model = {
-            x: data[data["model"] == x].iloc[-1]["score"] for x in models
-        }
-        # Round scores to 2 decimal places
-        scores_by_model = {x: round(y, 2) for x, y in scores_by_model.items()}
+    # Hacky way to hide/show model value boxes. This is currently the only real
+    # option you want the value box UI to be statically rendered (thus, reducing
+    # flicker on update), but also want to hide/show them based on user input.
+    @reactive.effect
+    @reactive.event(input.models)
+    def _():
+        ui.remove_ui("#value-box-hide")  # Remove any previously added style tag
 
-        return ui.layout_columns(
-            *[
-                # For each model, return a value_box with the score, colored based on
-                # how high the score is.
-                make_value_box(model, score)
-                for model, score in scores_by_model.items()
-            ],
-            fill=False,
-        )
+        # Construct CSS to hide the value boxes that the user has deselected
+        css = ""
+        missing_models = list(set(all_models) - set(input.models()))
+        for model in missing_models:
+            i = all_models.index(model) + 1
+            css += f"#value-boxes > *:nth-child({i}) {{ display: none; }}"
 
-    @render_widget
-    def plot_timeseries():
-        """
-        Returns a Plotly Figure visualization. Streams new data to the Plotly widget in
-        the browser whenever filtered_df() updates, and completely recreates the figure
-        when filtered_model_names() changes (see recreate_key=... above).
-        """
-        fig = px.line(
-            filtered_df(),
-            x="time",
-            y="score",
-            labels=dict(score="accuracy"),
-            color="model",
-            color_discrete_map=model_colors,
-            template="simple_white",
-        )
-
-        return fig
+        # Add the CSS to the head of the document
+        if css:
+            style = ui.tags.style(css, id="value-box-hide")
+            ui.insert_ui(style, selector="head")
 
 
 app = App(app_ui, server)

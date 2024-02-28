@@ -1,11 +1,11 @@
 import asyncio
 import datetime
+import random
 import sqlite3
 from pathlib import Path
 
 import numpy as np
 import pandas as pd
-import random
 
 here = Path(__file__).parent
 accuracy_scores = pd.read_csv(here / "fake_accuracy_scores.csv")
@@ -51,7 +51,7 @@ async def update_db(position):
             new_data["timestamp"] = datetime.datetime.utcnow()
             new_data.to_sql("accuracy_scores", con, index=False, if_exists="append")
             position = (position % (60 * 60)) + 1
-            await asyncio.sleep(random.randint(1, 10))
+            await asyncio.sleep(random.randint(1, 3))
 
 
 def begin():

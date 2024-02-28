@@ -1,21 +1,10 @@
-from faicons import icon_svg
-from pathlib import Path
 import pandas as pd
-import subprocess
+from faicons import icon_svg
 
-from shiny import Inputs, Outputs, Session, App, render, ui, reactive
-
-app_dir = Path(__file__).parent
-
-# Launch process to generate logs
-process = subprocess.Popen(["python", app_dir / "populate-logs.py"])
-
-
-# File reader polls the file (every second by default) for changes
-@reactive.file_reader(app_dir / "logs.csv")
-def logs():
-    return pd.read_csv(app_dir / "logs.csv")
-
+# Import the reactive file reader (logs) and the process the external
+# process that generates the logs
+from shared import logs_df, process
+from shiny import App, Inputs, Outputs, Session, reactive, render, ui
 
 app_ui = ui.page_fillable(
     ui.layout_columns(
@@ -40,7 +29,7 @@ app_ui = ui.page_fillable(
             showcase=icon_svg("envelope"),
         ),
         col_widths=[6, 2, 2, 2],
-        fill=False
+        fill=False,
     ),
     ui.layout_columns(
         ui.card(
@@ -52,19 +41,18 @@ app_ui = ui.page_fillable(
             ui.output_data_frame("message_counts"),
         ),
         col_widths=[8, 4],
-    )
+    ),
 )
 
 
 def server(input: Inputs, output: Outputs, session: Session):
-    
     @render.data_frame
     def df():
-        return logs().sort_values("date", ascending=False)
+        return logs_df().sort_values("date", ascending=False)
 
     @reactive.calc
     def current():
-        return logs().iloc[-1]
+        return logs_df().iloc[-1]
 
     @render.text
     def last_update():
@@ -73,7 +61,7 @@ def server(input: Inputs, output: Outputs, session: Session):
 
     @render.text
     def n_messages():
-        return len(logs())
+        return len(logs_df())
 
     @render.text
     def cur_status():
@@ -85,11 +73,11 @@ def server(input: Inputs, output: Outputs, session: Session):
 
     @render.data_frame
     def message_counts():
-        counts = logs()["message"].value_counts().reset_index()
+        counts = logs_df()["message"].value_counts().reset_index()
         counts.columns = ["message", "count"]
         counts = counts.sort_values("count", ascending=False)
         return render.DataGrid(counts, filters=True)
-    
+
     session.on_ended(process.kill)
 
 

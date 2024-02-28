@@ -1,5 +1,4 @@
 # By Chelsea Parlett Pelleriti
-from pathlib import Path
 import matplotlib.pyplot as plt
 
 # Import modules for modeling
@@ -8,54 +7,29 @@ import seaborn as sns
 
 # Import custom Python Functions from local file
 from compare import compare, sim_data
+from shared import mathjax, prose, restrict_width
 from shiny import reactive
 from shiny.express import input, render, ui
 
-app_dir = Path(__file__).parent
-
-# Allow LaTeX to be displayed via MathJax
-ui.head_content(
-    ui.tags.script(
-        src="https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"
-    ),
-    ui.tags.script(
-        "if (window.MathJax) MathJax.Hub.Queue(['Typeset', MathJax.Hub]);"
-    )
-)
+# Import MathJax for LaTeX rendering
+mathjax
 
 
-# Helper function to restrict width of content
-def restrict_width(*args, sm=None, md=None, lg=None, pad_y=5, **kwargs):
-    cls = "mx-auto"
-    if sm:
-        cls += f" col-sm-{sm}"
-    if md:
-        cls += f" col-md-{md}"
-    if lg:
-        cls += f" col-lg-{lg}"
-    
-    return ui.div(
-        *args,
-        {"class": cls},
-        {"class": f"py-{pad_y}"},
-        **kwargs
-    )
-
-
-# Title
 with restrict_width(sm=10, md=10, lg=8):
     ui.h1(
         "How Does Regularization Strength Affect Coefficient Estimates?",
-        class_="text-lg-center text-left"
+        class_="text-lg-center text-left",
     )
-    
 
-# Lead in
 with restrict_width(sm=10, md=7, lg=5, pad_y=4):
     ui.input_slider(
-        "a", "Select a Regularization Strength:",
-        0.000000001, 1, 0.1,
-        step=0.01, width="100%",
+        "a",
+        "Select a Regularization Strength:",
+        0.000000001,
+        1,
+        0.1,
+        step=0.01,
+        width="100%",
     )
     ui.p(
         {"class": "pt-4 small"},
@@ -64,6 +38,7 @@ with restrict_width(sm=10, md=7, lg=5, pad_y=4):
 
 # Plot of all simulation coefficients
 with restrict_width(lg=11):
+
     @render.plot
     def plot():
         # get data from reactive Calc
@@ -77,16 +52,31 @@ with restrict_width(lg=11):
             hue="model",
             data=sim_alpha,
             ax=ax,
-            order=["A", "E", "I", "O", "U", "Y", "W", "B", "C", "D", "G", "H", "J", "K"],
+            order=[
+                "A",
+                "E",
+                "I",
+                "O",
+                "U",
+                "Y",
+                "W",
+                "B",
+                "C",
+                "D",
+                "G",
+                "H",
+                "J",
+                "K",
+            ],
         )
         tt = "Coefficient Estimates when alpha = " + str(input.a())
         ax2.set(xlabel="", ylabel="Coefficient Value", title=tt)
         return fig
-    
+
 
 # Explanation and Explore prose
 with restrict_width(sm=10, md=10, lg=6):
-    ui.markdown(open(app_dir / "prose.md").read())
+    prose
 
 
 with restrict_width(lg=11):
