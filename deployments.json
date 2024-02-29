@@ -6,9 +6,29 @@
       "url": "https://gallery.shinyapps.io/template-basic-app/"
     },
     {
+      "folder": "basic-app-plot",
+      "guid": 11359401,
+      "url": "https://gallery.shinyapps.io/template-basic-app-plot1/"
+    },
+    {
+      "folder": "basic-navigation",
+      "guid": 11359059,
+      "url": "https://gallery.shinyapps.io/template-basic-navigation/"
+    },
+    {
+      "folder": "basic-sidebar",
+      "guid": 11359435,
+      "url": "https://gallery.shinyapps.io/template-basic-sidebar1/"
+    },
+    {
       "folder": "dashboard",
       "guid": 10892532,
       "url": "https://gallery.shinyapps.io/template-dashboard/"
+    },
+    {
+      "folder": "dashboard-tips",
+      "guid": 11359445,
+      "url": "https://gallery.shinyapps.io/template-dashboard-tips1/"
     },
     {
       "folder": "database-explorer",
@@ -19,6 +39,11 @@
       "folder": "map",
       "guid": 10897341,
       "url": "https://gallery.shinyapps.io/template-map/"
+    },
+    {
+      "folder": "model-scoring",
+      "guid": 11359083,
+      "url": "https://gallery.shinyapps.io/template-model-scoring/"
     },
     {
       "folder": "monitor-database",
@@ -34,11 +59,6 @@
       "folder": "monitor-folder",
       "guid": 10897345,
       "url": "https://gallery.shinyapps.io/template-monitor-folder/"
-    },
-    {
-      "folder": "multi-page",
-      "guid": 10897335,
-      "url": "https://gallery.shinyapps.io/template-multi-page/"
     },
     {
       "folder": "nba-dashboard",
@@ -61,14 +81,9 @@
       "url": "https://gallery.shinyapps.io/template-survey/"
     },
     {
-      "folder": "todo_list",
-      "guid": 10897340,
-      "url": "https://gallery.shinyapps.io/template-todo_list/"
-    },
-    {
-      "folder": "wizard",
-      "guid": 10897338,
-      "url": "https://gallery.shinyapps.io/template-wizard/"
+      "folder": "survey-wizard",
+      "guid": 11359104,
+      "url": "https://gallery.shinyapps.io/template-survey-wizard/"
     }
   ]
 }

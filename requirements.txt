@@ -1,1 +1,17 @@
-shiny
+-r basic-app/requirements.txt
+-r basic-app-plot/requirements.txt
+-r basic-navigation/requirements.txt
+-r basic-sidebar/requirements.txt
+-r dashboard-tips/requirements.txt
+-r dashboard/requirements.txt
+-r database-explorer/requirements.txt
+-r map/requirements.txt
+-r model-scoring/requirements.txt
+-r monitor-database/requirements.txt
+-r monitor-file/requirements.txt
+-r monitor-folder/requirements.txt
+-r nba-dashboard/requirements.txt
+-r regularization/requirements.txt
+-r stock-app/requirements.txt
+-r survey-wizard/requirements.txt
+-r survey/requirements.txt

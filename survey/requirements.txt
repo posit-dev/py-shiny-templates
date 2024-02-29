@@ -1,2 +1,3 @@
-shiny 
+shiny
+shiny_validate
 pandas

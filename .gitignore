@@ -161,3 +161,6 @@ cython_debug/
 
 .DS_Store
 **/__pycache__/
+
+_dev/
+rsconnect-python/

@@ -1,11 +1,10 @@
-from shiny import Inputs, Outputs, Session, App, reactive, render, req, ui
-from pathlib import Path
-import os
-import pandas as pd
-import faicons
 import io
 import random
-from datetime import datetime
+
+import faicons
+import pandas as pd
+from shared import files_df, process, watch_folder
+from shiny import App, Inputs, Outputs, Session, reactive, render, req, ui
 
 app_ui = ui.page_fillable(
     ui.layout_columns(
@@ -13,15 +12,12 @@ app_ui = ui.page_fillable(
             ui.card_header(
                 "Select log file",
                 ui.popover(
-                    ui.span(
-                        faicons.icon_svg("plus"),
-                        style="position:absolute; top: 5px; right: 7px;",
-                    ),
-                    "Generate new log file",
+                    faicons.icon_svg("plus"),
                     ui.input_action_button("add", "Add new logs"),
-                    id="card_popover",
+                    title="Generate new log file",
                     placement="left",
                 ),
+                class_="d-flex justify-content-between align-items-center",
             ),
             ui.output_data_frame("file_list"),
         ),
@@ -32,75 +28,52 @@ app_ui = ui.page_fillable(
 
 
 def server(input: Inputs, output: Outputs, session: Session):
-    log_folder = Path(__file__).parent / "watch_folder"
-
-    def check_func(folder: Path = log_folder):
-        return os.stat(folder).st_mtime
-
-    def list_files(folder: Path) -> pd.DataFrame:
-        return pd.DataFrame(
-            [
-                (
-                    file.name,
-                    datetime.fromtimestamp(file.stat().st_mtime).strftime(
-                        "%Y-%m-%d %H:%M:%S"
-                    ),
-                )
-                for file in folder.glob("*")
-            ],
-            columns=["File Name", "Last Edited"],
-        )
-
-    @reactive.poll(check_func)
-    def files():
-        return list_files(log_folder)
+    # When the session ends, end the folder watching process
+    session.on_ended(process.kill)
 
     @render.data_frame
     def file_list():
-        return render.DataGrid(
-            files(),
-            row_selection_mode="single",
-        )
+        return render.DataGrid(files_df(), row_selection_mode="single")
 
     @render.ui
     def log_output():
         idx = input.file_list_selected_rows()
         if not idx:
-            return ui.card(ui.card_header("Select log file"))
+            return ui.card(
+                ui.card_header("Select log file"),
+                "Select a log file from the list to view its contents",
+            )
 
         return ui.card(
             ui.card_header(
                 "Log output",
-                ui.popover(
-                    ui.span(
-                        faicons.icon_svg("download"),
-                        style="position:absolute; top: 5px; right: 7px;",
-                    ),
-                    ui.download_button("download", "Download File"),
-                    id="card_popover",
+                ui.download_link(
+                    "download", "Download", icon=faicons.icon_svg("download")
                 ),
+                class_="d-flex justify-content-between align-items-center",
             ),
             ui.output_data_frame("data_grid"),
         )
 
-    @reactive.Calc
+    @reactive.calc
     def selected_file():
         idx = req(input.file_list_selected_rows())
-        file = files()["File Name"][idx[0]]
-        return pd.read_csv(log_folder / file)
+        file = files_df()["File Name"][idx[0]]
+        return pd.read_csv(watch_folder / file)
 
     @render.data_frame
     def data_grid():
-        return render.DataGrid(selected_file(), height="95%", width="95%")
+        return render.DataGrid(selected_file())
 
     @reactive.effect
     @reactive.event(input.add)
     def sim_logs():
-        logs = pd.read_csv(log_folder / "logs.csv")
+        logs = pd.read_csv(watch_folder / files_df()["File Name"][0])
         sampled_logs = logs.sample(n=1000, replace=True)
-        sampled_logs.to_csv(log_folder / f"logs-{random.randint(100, 999)}.csv")
+        id = random.randint(100, 999)
+        sampled_logs.to_csv(watch_folder / f"logs-{id}.csv")
 
-    @session.download(filename="logs.csv")
+    @render.download(filename="logs.csv")
     def download():
         csv = selected_file()
         with io.StringIO() as buf:
