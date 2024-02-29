@@ -5,6 +5,8 @@ body {
     max-width: 475px !important;
     margin-left: auto !important;
     margin-right: auto !important;
+    padding-top: 3rem;
+    padding-bottom: 5rem;
   }
 }
 
