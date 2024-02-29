@@ -38,22 +38,25 @@ app_ui = ui.page_sidebar(
             sep="",
         ),
     ),
-    ui.card(
-        ui.card_header("Player career comparison"),
-        output_widget("career_compare"),
-        ui.card_footer("Percentiles are based on career per game averages."),
-        full_screen=True,
-    ),
-    ui.card(
-        ui.card_header(
-            "Player career ",
-            ui.input_select("stat", None, choices=stats, selected="PTS", width="auto"),
-            " vs the rest of the league",
-            class_="d-flex align-items-center gap-1",
+    ui.layout_columns(
+        ui.card(
+            ui.card_header("Player career comparison"),
+            output_widget("career_compare"),
+            ui.card_footer("Percentiles are based on career per game averages."),
+            full_screen=True,
         ),
-        output_widget("stat_compare"),
-        ui.card_footer("Click on a player's name to add them to the comparison."),
-        full_screen=True,
+        ui.card(
+            ui.card_header(
+                "Player career ",
+                ui.input_select("stat", None, choices=stats, selected="PTS", width="auto"),
+                " vs the rest of the league",
+                class_="d-flex align-items-center gap-1",
+            ),
+            output_widget("stat_compare"),
+            ui.card_footer("Click on a player's name to add them to the comparison."),
+            full_screen=True,
+        ),
+        col_widths=[4, 8]
     ),
     ui.include_css(app_dir / "styles.css"),
     title="NBA Dashboard",
