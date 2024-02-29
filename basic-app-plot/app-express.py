@@ -14,5 +14,6 @@ def hist():
     p = sns.histplot(df, x=input.var(), color="#007bc2", edgecolor="white")
     return p.set(xlabel=None)
 
+
 # Select input for choosing the variable to plot
 ui.input_select("var", "Select variable", choices=["bill_length_mm", "body_mass_g"])
