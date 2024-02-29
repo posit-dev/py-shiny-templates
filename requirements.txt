@@ -11,9 +11,7 @@
 -r monitor-file/requirements.txt
 -r monitor-folder/requirements.txt
 -r nba-dashboard/requirements.txt
--r pygwalker/requirements.txt
 -r regularization/requirements.txt
 -r stock-app/requirements.txt
 -r survey-wizard/requirements.txt
 -r survey/requirements.txt
--r todo_list/requirements.txt
