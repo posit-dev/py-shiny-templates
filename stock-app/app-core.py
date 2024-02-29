@@ -40,6 +40,7 @@ app_ui = ui.page_sidebar(
             ui.head_content(
                 ui.tags.style(".plotly .modebar-container {display: none !important;}")
             ),
+            full_screen=True
         ),
         ui.card(
             ui.card_header("Latest data"),

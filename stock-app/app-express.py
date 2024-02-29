@@ -44,7 +44,7 @@ with ui.layout_column_wrap(fill=False):
 
 
 with ui.layout_columns(col_widths=[9, 3]):
-    with ui.card():
+    with ui.card(full_screen=True):
         ui.card_header("Price history")
 
         @render_plotly
