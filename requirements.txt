@@ -5,7 +5,7 @@
 -r dashboard-tips/requirements.txt
 -r dashboard/requirements.txt
 -r database-explorer/requirements.txt
--r map/requirements.txt
+-r map-distance/requirements.txt
 -r model-scoring/requirements.txt
 -r monitor-database/requirements.txt
 -r monitor-file/requirements.txt
