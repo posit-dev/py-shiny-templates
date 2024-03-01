@@ -25,7 +25,7 @@ app_ui = ui.page_navbar(
 def server(input, output, session):
     @render.plot
     def hist():
-        p = sns.histplot(df, x=input.var(), color="#007bc2", edgecolor="white")
+        p = sns.histplot(df, x=input.var(), facecolor="#007bc2", edgecolor="white")
         return p.set(xlabel=None)
 
     @render.data_frame

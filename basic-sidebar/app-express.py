@@ -15,6 +15,6 @@ with ui.sidebar():
 @render.plot
 def hist():
     hue = "species" if input.species() else None
-    sns.kdeplot(df, x=input.var(), hue=hue, color="#007bc2")
+    sns.kdeplot(df, x=input.var(), hue=hue, facecolor="#007bc2")
     if input.show_rug():
         sns.rugplot(df, x=input.var(), hue=hue, color="black", alpha=0.25)

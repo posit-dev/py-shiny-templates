@@ -22,7 +22,7 @@ def server(input):
     @render.plot
     def hist():
         # Histogram of the selected variable (input.var())
-        p = sns.histplot(df, x=input.var(), color="#007bc2", edgecolor="white")
+        p = sns.histplot(df, x=input.var(), facecolor="#007bc2", edgecolor="white")
         return p.set(xlabel=None)
 
 
