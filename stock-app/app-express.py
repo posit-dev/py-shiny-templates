@@ -1,3 +1,5 @@
+from pathlib import Path
+
 import cufflinks as cf
 import pandas as pd
 import yfinance as yf
@@ -11,6 +13,8 @@ from stocks import stocks
 # Default to the last 6 months
 end = pd.Timestamp.now()
 start = end - pd.Timedelta(weeks=26)
+
+
 
 ui.page_opts(title="Stock explorer", fillable=True)
 
@@ -77,7 +81,7 @@ with ui.layout_columns(col_widths=[9, 3]):
             return x
 
 
-ui.head_content(ui.tags.style(".plotly .modebar-container {display: none !important;}"))
+ui.include_css(Path(__file__).parent / "styles.css")
 
 
 @reactive.calc

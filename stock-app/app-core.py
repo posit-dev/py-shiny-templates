@@ -1,3 +1,5 @@
+from pathlib import Path
+
 import cufflinks as cf
 import pandas as pd
 import yfinance as yf
@@ -9,6 +11,8 @@ from stocks import stocks
 # Default to the last 6 months
 end = pd.Timestamp.now()
 start = end - pd.Timedelta(weeks=26)
+
+app_dir = Path(__file__).parent
 
 app_ui = ui.page_sidebar(
     ui.sidebar(
@@ -37,9 +41,6 @@ app_ui = ui.page_sidebar(
         ui.card(
             ui.card_header("Price history"),
             output_widget("price_history"),
-            ui.head_content(
-                ui.tags.style(".plotly .modebar-container {display: none !important;}")
-            ),
             full_screen=True
         ),
         ui.card(
@@ -48,6 +49,7 @@ app_ui = ui.page_sidebar(
         ),
         col_widths=[9, 3],
     ),
+    ui.include_css(app_dir / "styles.css"),
     title="Stock explorer",
     fillable=True,
 )
