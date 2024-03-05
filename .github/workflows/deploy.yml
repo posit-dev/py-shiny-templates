@@ -33,12 +33,12 @@ jobs:
         uses: actions/setup-python@v5
         with:
           python-version: "3.9.13"
-      - name: Cache deployment
-        id: cache-deployment
-        uses: actions/cache@v2
-        with:
-          path: ${{ matrix.folder }}
-          key: ${{ runner.os }}-deploy-${{ hashFiles(matrix.folder) }}
+      #- name: Cache deployment
+      #  id: cache-deployment
+      #  uses: actions/cache@v2
+      #  with:
+      #    path: ${{ matrix.folder }}
+      #    key: ${{ runner.os }}-deploy-${{ hashFiles(matrix.folder) }}
       - name: Install rsconnect-python
         run: pip install rsconnect-python
       - name: Configure rsconnect-python
