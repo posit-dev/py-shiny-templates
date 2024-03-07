@@ -45,7 +45,9 @@ app_ui = ui.page_sidebar(
         id="module_container",
     ),
     title="DuckDB query explorer",
+    class_="bslib-page-dashboard",
 )
+
 
 
 def server(input, output, session):

@@ -9,6 +9,8 @@ from shiny.express import render, session, ui
 
 ui.page_opts(fillable=True)
 
+{"class": "bslib-page-dashboard"}
+
 with ui.layout_columns(col_widths=[6, 2, 2, 2], fill=False):
     with ui.value_box(showcase=icon_svg("comment-dots")):
         "Current Message"

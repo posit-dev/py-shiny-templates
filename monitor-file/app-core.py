@@ -42,6 +42,7 @@ app_ui = ui.page_fillable(
         ),
         col_widths=[8, 4],
     ),
+    class_="bslib-page-dashboard"
 )
 
 
