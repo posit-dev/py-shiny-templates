@@ -15,7 +15,6 @@ end = pd.Timestamp.now()
 start = end - pd.Timedelta(weeks=26)
 
 
-
 ui.page_opts(title="Stock explorer", fillable=True)
 
 with ui.sidebar():

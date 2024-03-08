@@ -41,7 +41,7 @@ app_ui = ui.page_sidebar(
         ui.card(
             ui.card_header("Price history"),
             output_widget("price_history"),
-            full_screen=True
+            full_screen=True,
         ),
         ui.card(
             ui.card_header("Latest data"),

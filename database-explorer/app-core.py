@@ -49,7 +49,6 @@ app_ui = ui.page_sidebar(
 )
 
 
-
 def server(input, output, session):
     mod_counter = reactive.value(0)
 

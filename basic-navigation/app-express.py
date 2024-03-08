@@ -18,7 +18,9 @@ with ui.nav_panel("Page 1"):
 
             @render.plot
             def hist():
-                p = sns.histplot(df, x=input.var(), facecolor="#007bc2", edgecolor="white")
+                p = sns.histplot(
+                    df, x=input.var(), facecolor="#007bc2", edgecolor="white"
+                )
                 return p.set(xlabel=None)
 
         with ui.nav_panel("Table"):
