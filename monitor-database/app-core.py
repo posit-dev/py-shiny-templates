@@ -28,7 +28,7 @@ app_ui = ui.page_sidebar(
         full_screen=True,
     ),
     title="Model monitoring dashboard",
-    class_="bslib-page-dashboard"
+    class_="bslib-page-dashboard",
 )
 
 

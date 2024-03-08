@@ -48,7 +48,9 @@ app_ui = ui.page_sidebar(
         ui.card(
             ui.card_header(
                 "Player career ",
-                ui.input_select("stat", None, choices=stats, selected="PTS", width="auto"),
+                ui.input_select(
+                    "stat", None, choices=stats, selected="PTS", width="auto"
+                ),
                 " vs the rest of the league",
                 class_="d-flex align-items-center gap-1",
             ),
@@ -56,7 +58,7 @@ app_ui = ui.page_sidebar(
             ui.card_footer("Click on a player's name to add them to the comparison."),
             full_screen=True,
         ),
-        col_widths=[4, 8]
+        col_widths=[4, 8],
     ),
     ui.include_css(app_dir / "styles.css"),
     title="NBA Dashboard",
