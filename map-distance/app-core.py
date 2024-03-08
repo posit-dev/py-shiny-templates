@@ -19,7 +19,7 @@ app_ui = ui.page_sidebar(
             choices=list(BASEMAPS.keys()),
             selected="WorldImagery",
         ),
-        ui.input_dark_mode()
+        ui.input_dark_mode(),
     ),
     ui.layout_column_wrap(
         ui.value_box(
@@ -48,6 +48,7 @@ app_ui = ui.page_sidebar(
     ),
     title="Location Distance Calculator",
     fillable=True,
+    class_="bslib-page-dashboard",
 )
 
 

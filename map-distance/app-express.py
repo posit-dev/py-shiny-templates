@@ -9,6 +9,7 @@ from shinywidgets import render_widget
 city_names = sorted(list(CITIES.keys()))
 
 ui.page_opts(title="Location Distance Calculator", fillable=True)
+{"class": "bslib-page-dashboard"}
 
 with ui.sidebar():
     ui.input_selectize("loc1", "Location 1", choices=city_names, selected="New York")
