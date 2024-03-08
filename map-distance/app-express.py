@@ -19,6 +19,7 @@ with ui.sidebar():
         choices=list(BASEMAPS.keys()),
         selected="WorldImagery",
     )
+    ui.input_dark_mode()
 
 with ui.layout_column_wrap(fill=False):
     with ui.value_box(showcase=icon_svg("globe"), theme="gradient-blue-indigo"):
