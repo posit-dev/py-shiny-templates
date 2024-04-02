@@ -42,7 +42,7 @@ with ui.sidebar():
     )
 
 
-with ui.layout_columns(col_widths=[4, 8]):
+with ui.layout_columns(col_widths={"sm": 12, "md": 12, "lg": [4, 8]}):
     with ui.card(full_screen=True):
         ui.card_header("Player career comparison")
 
