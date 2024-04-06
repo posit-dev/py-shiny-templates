@@ -1,7 +1,13 @@
 name: Publish Docker image to Docker Hub
 
 on:
-  workflow_dispatch:
+  push:
+    branches:
+      - dockerize  # Trigger the workflow on push events to the dockerize branch
+  pull_request:
+    branches:
+      - dockerize  # Optionally, trigger the workflow on pull request events targeting the dockerize branch
+  workflow_dispatch:  # Allows manual triggering of the workflow
 
 jobs:
   push_to_registry:
