@@ -28,4 +28,4 @@ jobs:
         with:
           context: ./basic-app
           push: true
-          tags: ${{ github.repository }}:latest
+          tags: ${{ github.repository }}:basic-app
