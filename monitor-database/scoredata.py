@@ -51,7 +51,7 @@ async def update_db(position):
             new_data["timestamp"] = datetime.datetime.utcnow()
             new_data.to_sql("accuracy_scores", con, index=False, if_exists="append")
             position = (position % (60 * 60)) + 1
-            await asyncio.sleep(random.randint(1, 3))
+            await asyncio.sleep(random.randint(2, 4))
 
 
 def begin():

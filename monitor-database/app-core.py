@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import plotly.graph_objects as go
 from shared import df, plot_timeseries, value_box_server, value_box_ui
 from shiny import App, Inputs, Outputs, Session, reactive, ui
 from shinywidgets import output_widget, render_plotly
@@ -24,7 +25,7 @@ app_ui = ui.page_sidebar(
             ui.input_switch("pause", "Pause updates", value=False, width="auto"),
             class_="d-flex justify-content-between",
         ),
-        output_widget("plot", height=500),
+        output_widget("plot"),
         full_screen=True,
     ),
     title="Model monitoring dashboard",
@@ -47,11 +48,19 @@ def server(input: Inputs, output: Outputs, session: Session):
     for model in all_models:
         value_box_server(model, maybe_paused_df, model)
 
+    # Create an empty plotly figure on page load
     @render_plotly
     def plot():
+        return go.FigureWidget()
+
+    # Update the plotly figure with the latest data
+    @reactive.effect
+    def _():
         d = maybe_paused_df()
         d = d[d["model"].isin(input.models())]
-        return plot_timeseries(d)
+        with plot.widget.batch_animate():
+            fig = plot_timeseries(d)
+            plot.widget.update(layout=fig.layout, data=fig.data)
 
     # Hacky way to hide/show model value boxes. This is currently the only real
     # option you want the value box UI to be statically rendered (thus, reducing
