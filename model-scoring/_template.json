@@ -1,0 +1,5 @@
+{
+  "name": "model-scoring",
+  "title": "Model scoring",
+  "description": "Use a combination of scikit-learn and plotnine to visualize model diagnostics like ROC and precision-recall curves."
+}

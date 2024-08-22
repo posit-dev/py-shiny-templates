@@ -1,0 +1,5 @@
+{
+  "name": "monitor-folder",
+  "title": "Streaming folder updates",
+  "description": "Monitor a folder for updates (e.g., adding a new file) and visualize the updates in real-time."
+}
