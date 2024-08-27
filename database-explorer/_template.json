@@ -1,5 +1,5 @@
 {
-  "name": "database-explorer",
+  "id": "database-explorer",
   "title": "SQL database explorer",
   "description": "Run queries on an SQL database and view the results in a data grid."
 }

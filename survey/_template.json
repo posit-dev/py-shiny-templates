@@ -1,5 +1,5 @@
 {
-  "name": "survey",
+  "id": "survey",
   "title": "Survey form",
   "description": "A simple survey form with a few input fields that simply writes responses to a file and displays a confirmation message when submitted."
 }

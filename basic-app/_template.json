@@ -1,5 +1,5 @@
 {
-  "name": "basic-app",
+  "id": "basic-app",
   "title": "A Basic app",
   "description": "A simple Shiny app to get you started quickly."
 }

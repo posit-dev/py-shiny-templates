@@ -1,5 +1,5 @@
 {
-  "name": "dashboard",
+  "id": "dashboard",
   "title": "Basic dashboard",
   "description": "A basic dashboard with input filters, value boxes, a plot, and table."
 }

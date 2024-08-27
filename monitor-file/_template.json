@@ -1,5 +1,5 @@
 {
-  "name": "monitor-file",
+  "id": "monitor-file",
   "title": "Streaming file updates",
   "description": "Efficiently monitor a file for updates and visualize the data in real-time."
 }
