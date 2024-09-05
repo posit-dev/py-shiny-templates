@@ -1,0 +1,5 @@
+{
+  "id": "survey-wizard",
+  "title": "Survey wizard form",
+  "description": "A simple survey wizard that simply writes responses to a file and displays a confirmation message when submitted."
+}

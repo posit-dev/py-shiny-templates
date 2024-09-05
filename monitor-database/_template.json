@@ -1,0 +1,5 @@
+{
+  "id": "monitor-database",
+  "title": "Streaming database updates",
+  "description": "Efficiently monitor a database for updates and visualize the data in real-time."
+}

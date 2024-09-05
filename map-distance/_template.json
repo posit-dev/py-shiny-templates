@@ -1,0 +1,5 @@
+{
+  "id": "map-distance",
+  "title": "Location distance calculator",
+  "description": "Run queries on an SQL database and view the results in a data grid."
+}

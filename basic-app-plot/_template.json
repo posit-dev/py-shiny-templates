@@ -1,0 +1,5 @@
+{
+  "id": "basic-app-plot",
+  "title": "Basic reactive plot",
+  "description": "A basic example of changing a histogram based on a select input control."
+}

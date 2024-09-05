@@ -1,0 +1,5 @@
+{
+  "id": "basic-sidebar",
+  "title": "Reactive plot with a sidebar",
+  "description": "Place numerous input controls in a sidebar and use them to control a plot in the main panel."
+}
