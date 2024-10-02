@@ -1,5 +1,8 @@
 # Multi-page wizard
 
+<a href='https://connect.posit.cloud/publish?framework=shiny&sourceRepositoryURL=https%3A%2F%2Fgithub.com%2Fposit-dev%2Fpy-shiny-templates&sourceRef=main&sourceRefType=branch&primaryFile=survey-wizard%2Fapp-core.py&pythonVersion=3.11'><img src='https://cdn.connect.posit.cloud/assets/deploy-to-connect-blue.svg' align="right" /></a>
+
+
 This application shows how you would build a multi-page wizard app in Shiny.
 This is useful for large apps which have a natural progression from page-to-page.
 It illustrates a few Shiny techniques:
