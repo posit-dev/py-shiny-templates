@@ -1,5 +1,5 @@
 plotly
-yfinance 
+yfinance>=0.2.54
 pandas==2.2.1
 shiny
 shinywidgets
