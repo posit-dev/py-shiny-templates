@@ -1,0 +1,19 @@
+{
+  "id": "data-sci-adventure",
+  "title": "Data Science Adventure",
+  "description": "Choose your own data science adventure.",
+  "next_steps": [
+    "Put your Anthropic API key in the `template.env` file and rename it to `.env`.",
+    "Run the app with `shiny run app.py`."
+  ],
+  "follow_up": [
+    {
+      "type": "info",
+      "text": "Need help obtaining an API key?"
+    },
+    {
+      "type": "action",
+      "text": "Learn how to obtain one at https://posit-dev.github.io/chatlas/reference/ChatAnthropic.html"
+    }
+  ]
+}

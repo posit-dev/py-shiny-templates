@@ -1,9 +1,10 @@
 from chatlas import ChatAnthropic
+from dotenv import load_dotenv
 from faicons import icon_svg
-
 from shiny import reactive
 from shiny.express import input, render, ui
 
+_ = load_dotenv()
 chat_client = ChatAnthropic(
     system_prompt="""
     You are a helpful AI fitness coach.
