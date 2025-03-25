@@ -1,0 +1,7 @@
+chatlas[anthropic]
+openai
+dotenv
+faicons
+seaborn
+shiny @ git+https://github.com/posit-dev/py-shiny@main
+querychat @ git+https://github.com/posit-dev/querychat#subdirectory=python-package
