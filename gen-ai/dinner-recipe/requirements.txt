@@ -1,0 +1,6 @@
+chatlas[anthropic]
+openai
+dotenv
+faicons
+shinyswatch
+shiny @ git+https://github.com/posit-dev/py-shiny@main
