@@ -136,7 +136,7 @@ async def recipe_message():
         return "Unable to extract a recipe from the chat. Please try again."
 
     ingredients = [
-        ui.tags.li(f"{ing["amount"]} {ing["unit"]} {ing["name"]}")
+        ui.tags.li(f'{ing["amount"]} {ing["unit"]} {ing["name"]}')
         for ing in recipe["ingredients"]
     ]
 
