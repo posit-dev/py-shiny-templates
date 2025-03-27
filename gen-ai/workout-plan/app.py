@@ -52,15 +52,14 @@ with ui.sidebar(open={"mobile": "always-above"}):
 # Create a Markdown stream
 workout_stream = ui.MarkdownStream("workout_stream")
 
-# Display it in the main content area (w/ a restricted width)
-with ui.layout_columns(col_widths=[-2, 8, -2]):
-    workout_stream.ui(
-        content=(
-            "Hi there! 👋 I'm your AI fitness coach. 💪"
-            "\n\n"
-            "Fill out the form in the sidebar to get started. 📝 🏋️‍♂ ️"
-        )
+# Display it in the main content area
+workout_stream.ui(
+    content=(
+        "Hi there! 👋 I'm your AI fitness coach. 💪"
+        "\n\n"
+        "Fill out the form in the sidebar to get started. 📝 🏋️‍♂ ️"
     )
+)
 
 
 # When the user clicks the "Generate Workout" button, generate a workout plan
