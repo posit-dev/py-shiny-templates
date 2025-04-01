@@ -19,6 +19,7 @@ app_ui = ui.page_sidebar(
         "my_stream",
         content="Press the button and I'll tell you a joke."
     ),
+    title="AI Joke Generator",
 )
 
 
