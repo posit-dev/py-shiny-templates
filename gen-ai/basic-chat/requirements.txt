@@ -2,4 +2,4 @@ shiny
 dotenv
 chatlas[anthropic]
 # Temporary workaround so connect cloud will pick up latest version
-httpcore
+httpcore>=1.0.8
