@@ -2,3 +2,4 @@ shiny
 dotenv
 chatlas[anthropic]
 anthropic==0.49.0
+httpcore>=1.0.8
