@@ -1,4 +1,6 @@
-chatlas[anthropic]
+shiny
 dotenv
 faicons
-shiny @ git+https://github.com/posit-dev/py-shiny@main
+chatlas[anthropic]
+# Temporary workaround so connect cloud will pick up latest version
+httpcore

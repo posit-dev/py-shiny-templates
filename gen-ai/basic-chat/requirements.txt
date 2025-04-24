@@ -1,5 +1,5 @@
 shiny
 dotenv
 chatlas[anthropic]
-anthropic==0.49.0
-httpcore>=1.0.8
+# Temporary workaround so connect cloud will pick up latest version
+httpcore
