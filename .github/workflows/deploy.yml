@@ -56,7 +56,7 @@ jobs:
               -a ${{ matrix.guid }} && break || sleep 15
           done
   test-deploys:
-    name: Test Shiny Deployments
+    name: Test Shiny Template Deployments
     needs: deploy
     runs-on: ubuntu-latest
     steps:
