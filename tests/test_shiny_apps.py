@@ -41,12 +41,14 @@ def wait_for_shiny_initialization(
 
 def detect_errors_in_page(page: Page, url: str) -> None:
     expect(page.locator(".shiny-busy")).to_have_count(0, timeout=ERROR_ELEMENT_TIMEOUT)
-    page.wait_for_timeout(POST_INIT_WAIT)
     error_locator = page.locator(".shiny-output-error")
     expect(error_locator).to_have_count(0, timeout=ERROR_ELEMENT_TIMEOUT)
 
 
 def test_shiny_app_for_errors(page: Page, url: str) -> None:
     page.goto(url, timeout=PAGE_LOAD_TIMEOUT)
+    # Wait for shiny to init
     wait_for_shiny_initialization(page, timeout=SHINY_INIT_TIMEOUT)
+    # Wait too long for output to load
+    page.wait_for_timeout(POST_INIT_WAIT)
     detect_errors_in_page(page, url=url)
