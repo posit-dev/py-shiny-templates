@@ -15,29 +15,45 @@ def wait_for_shiny_initialization(
     """Wait for Shiny app to complete initialization.
 
     Args:
-        page: Playwright Page object
-        timeout: Maximum time to wait in milliseconds
+            page: Playwright Page object
+            timeout: Maximum time to wait in milliseconds
 
     Raises:
-        AssertionError: If initialization fails or times out
+            AssertionError: If initialization fails or times out
     """
     try:
-        init_check = """() => {
-            return window.Shiny && (
-                (window.Shiny.initialized === true) ||
-                (window.Shiny.initializedPromise &&
-                    typeof window.Shiny.initializedPromise.then === 'function')
-            );
-        }"""
+        init_check = (
+            "() => window.Shiny && "
+            "(window.Shiny.initializedPromise && "
+            "typeof window.Shiny.initializedPromise.then === 'function')"
+        )
         page.wait_for_function(init_check, timeout=timeout)
 
-        page.evaluate(
-            """async () => {
-                if (window.Shiny && window.Shiny.initializedPromise) {
-                    await window.Shiny.initializedPromise;
+        result = page.evaluate(
+            """
+            async () => {
+                if (!window.Shiny) {
+                    return { success: false, error: 'Shiny not found' };
                 }
-            }"""
+                if (
+                    window.Shiny.initializedPromise &&
+                    typeof window.Shiny.initializedPromise.then === 'function'
+                ) {
+                    try {
+                        await window.Shiny.initializedPromise;
+                        return { success: true };
+                    } catch (e) {
+                        return { success: false, error: e.message || 'Promise rejected' };
+                    }
+                }
+                return { success: false, error: 'Shiny not properly initialized' };
+            }
+            """
         )
+
+        if not result.get("success", False):
+            error = result.get("error", "Unknown error during Shiny initialization")
+            raise AssertionError(f"Shiny initialization failed for {page.url}: {error}")
 
     except Exception as e:
         error_msg = f"Shiny initialization failed or timed out for {page.url}: {str(e)}"
