@@ -1,5 +1,5 @@
-plotly
-yfinance 
+plotly < 6.0 # https://github.com/santosjorge/cufflinks/issues/289
+yfinance
 pandas==2.2.1
 shiny
 shinywidgets
