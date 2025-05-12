@@ -1,6 +1,9 @@
 name: Check Files
 
 on:
+  push:
+    branches:
+      - main
   pull_request:
     paths:
       - ".github/workflows/check-files.yml"
