@@ -13,16 +13,6 @@ jobs:
         uses: actions/checkout@v2
 
       - name: Check files
+        shell: bash
         run: |
-          #!/bin/bash
-          set -e
-          for dir in ./*/ ; do
-            if [ ! -f "$dir/app-core.py" ]; then
-              echo "app-core.py must be in each folder, but it's missing in $dir"
-              exit 1
-            fi
-            if [ -f "$dir/app.py" ]; then
-              echo "app.py should not be in any folder, but it's found in $dir"
-              exit 1
-            fi
-          done
+          ./.github/scripts/check_files
