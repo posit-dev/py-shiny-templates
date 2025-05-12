@@ -40,7 +40,7 @@ def wait_for_shiny_initialization(
 
 
 def detect_errors_in_page(page: Page, url: str) -> None:
-    expect(page.locator(".shiny-busy")).to_have_count(0, timeout=ERROR_ELEMENT_TIMEOUT)
+    expect(page.locator(".shiny-busy")).to_have_count(0, timeout=SHINY_INIT_TIMEOUT)
     error_locator = page.locator(".shiny-output-error")
     expect(error_locator).to_have_count(0, timeout=ERROR_ELEMENT_TIMEOUT)
 
