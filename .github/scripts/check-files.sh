@@ -4,8 +4,8 @@ set -e
 SCRIPT_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 ROOT_DIR="$(dirname $(dirname "$SCRIPT_DIR"))"
 
-for dir in $ROOT_DIR/*/ $ROOT_DIR/gen-ai/*/ ; do
-  if [[ "`basename $dir`" == "gen-ai" ]]; then
+for dir in "$ROOT_DIR"/*/ "$ROOT_DIR"/gen-ai/*/ ; do
+  if [[ "`basename "$dir"`" == "gen-ai" ]]; then
     continue
   fi
   if [ ! -f "$dir/app-core.py" ]; then
