@@ -15,4 +15,4 @@ jobs:
 
       - name: Check files
         shell: bash
-        run: .github/scripts/check_files.sh
+        run: .github/scripts/check-files.sh
