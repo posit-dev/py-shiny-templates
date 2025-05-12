@@ -13,7 +13,7 @@ _ = load_dotenv()
 chat_client = ChatAnthropic()
 
 ui.page_opts(
-    title="AI Joke Generator"
+    title="AI Joke Generator",
 )
 
 # Some sidebar input controls to populate a prompt and trigger the stream
