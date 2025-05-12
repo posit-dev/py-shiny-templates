@@ -51,10 +51,16 @@ jobs:
         run: |
           for i in {1..3}; do
             rsconnect deploy shiny ${{ matrix.folder }} \
-              --name gallery \
-              --entrypoint app-core.py \
-              -a ${{ matrix.guid }} && break || sleep 15
+                --name gallery \
+                --entrypoint app-core.py \
+                --app-id ${{ matrix.guid }} \
+              && exit 0 \
+              || sleep 15
           done
+
+          echo "Deployment failed after 3 attempts"
+          exit 1
+
   test-deploys:
     name: Test Shiny Template Deployments
     needs: deploy
