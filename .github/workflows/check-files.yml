@@ -3,6 +3,7 @@ name: Check Files
 on:
   pull_request:
     paths:
+      - ".github/workflows/check-files.yml"
       - "**.py"
 
 jobs:
