@@ -12,7 +12,9 @@ from shiny.express import input, ui
 _ = load_dotenv()
 chat_client = ChatAnthropic()
 
-ui.page_opts(title="AI Joke Generator")
+ui.page_opts(
+    title="AI Joke Generator",
+)
 
 # Some sidebar input controls to populate a prompt and trigger the stream
 with ui.sidebar():

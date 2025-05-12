@@ -16,7 +16,8 @@ app_ui = ui.page_sidebar(
         ui.input_action_button("go", "Tell me a joke", class_="btn-primary"),
     ),
     ui.output_markdown_stream(
-        "my_stream", content="Press the button and I'll tell you a joke."
+        "my_stream",
+        content="Press the button and I'll tell you a joke.",
     ),
     title="AI Joke Generator",
 )
