@@ -3,6 +3,7 @@ name: Python Lint Check
 on:
   pull_request:
     paths:
+      - ".github/workflows/lint.yml"
       - "**.py"
 
 jobs:
