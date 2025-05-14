@@ -19,7 +19,7 @@ with ui.layout_columns(col_widths=[4, 8]):
 
         @render.data_frame
         def file_list():
-            return render.DataGrid(files_df(), row_selection_mode="single")
+            return render.DataGrid(files_df(), selection_mode="row")
 
     @render.express
     def log_output():
