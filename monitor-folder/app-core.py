@@ -33,7 +33,7 @@ def server(input: Inputs, output: Outputs, session: Session):
 
     @render.data_frame
     def file_list():
-        return render.DataGrid(files_df(), row_selection_mode="single")
+        return render.DataGrid(files_df(), selection_mode="row")
 
     @render.ui
     def log_output():
