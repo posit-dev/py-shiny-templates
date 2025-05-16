@@ -97,12 +97,16 @@ def get_data():
 @reactive.calc
 def get_change():
     close = get_data()["Close"]
+    if len(close) < 2:
+        return 0.0
     return close.iloc[-1] - close.iloc[-2]
 
 
 @reactive.calc
 def get_change_percent():
     close = get_data()["Close"]
+    if len(close) < 2:
+        return 0.0
     change = close.iloc[-1] - close.iloc[-2]
     return change / close.iloc[-2] * 100
 

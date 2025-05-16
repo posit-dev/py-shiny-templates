@@ -5,9 +5,9 @@ SCRIPT_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 ROOT_DIR="$(dirname $(dirname "$SCRIPT_DIR"))"
 
 for dir in "$ROOT_DIR"/*/ "$ROOT_DIR"/gen-ai/*/ ; do
-  if [[ "$(basename "$dir")" == "gen-ai" ]]; then
-    continue
-  fi
+  [[ "$(basename "$dir")" == "gen-ai" ]] && continue
+  [[ "$(basename "$dir")" == "tests" ]] && continue
+
   if [ ! -f "$dir/app-core.py" ]; then
     echo "app-core.py must be in each folder, but it's missing in $dir"
     exit 1

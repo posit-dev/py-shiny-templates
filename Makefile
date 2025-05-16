@@ -26,3 +26,9 @@ format-black:
 format-isort:
 	@echo "-------- Sorting imports with isort --------"
 	isort . --profile black
+
+
+install-playwright:
+	playwright install --with-deps chromium
+test: ## test deployments are working
+	pytest --numprocesses auto .
