@@ -3,10 +3,15 @@ from pathlib import Path
 import cufflinks as cf
 import pandas as pd
 import yfinance as yf
+from curl_cffi import requests
 from faicons import icon_svg
 from shiny import App, Inputs, Outputs, Session, reactive, render, ui
 from shinywidgets import output_widget, render_plotly
 from stocks import stocks
+
+# used to bypass financial APIs that have anti-bot measures in place
+session = requests.Session(impersonate="chrome")
+ticker = yf.Ticker("...", session=session)
 
 # Default to the last 6 months
 end = pd.Timestamp.now()
