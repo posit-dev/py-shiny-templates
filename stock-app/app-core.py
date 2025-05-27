@@ -117,8 +117,7 @@ def server(input: Inputs, output: Outputs, session: Session):
 
     @render.data_frame
     def latest_data():
-        data = get_data().iloc[-1:]
-        x = data.T.reset_index()
+        x = get_data()[:1].T.reset_index()
         x.columns = ["Category", "Value"]
         x["Value"] = x["Value"].apply(lambda v: f"{v:.1f}")
         return x
