@@ -3,17 +3,12 @@ from pathlib import Path
 import cufflinks as cf
 import pandas as pd
 import yfinance as yf
-from curl_cffi import requests
 from faicons import icon_svg
 from shiny import reactive
 from shiny.express import input, render, ui
 from shiny.ui import output_ui
 from shinywidgets import render_plotly
 from stocks import stocks
-
-# used to bypass financial APIs that have anti-bot measures in place
-session = requests.Session(impersonate="chrome")
-ticker = yf.Ticker("...", session=session)
 
 # Default to the last 6 months
 end = pd.Timestamp.now()
@@ -33,7 +28,10 @@ with ui.layout_column_wrap(fill=False):
 
         @render.ui
         def price():
-            close = get_data()["Close"]
+            data = get_data()
+            if data.empty:
+                return "N/A"
+            close = data["Close"]
             return f"{close.iloc[-1]:.2f}"
 
     with ui.value_box(showcase=output_ui("change_icon")):
@@ -57,8 +55,26 @@ with ui.layout_columns(col_widths=[9, 3]):
 
         @render_plotly
         def price_history():
+            data = get_data()
+            if data.empty:
+                # Return an empty plotly figure if no data
+                import plotly.graph_objects as go
+
+                fig = go.Figure()
+                fig.add_annotation(
+                    text="No data available for selected date range",
+                    xref="paper",
+                    yref="paper",
+                    x=0.5,
+                    y=0.5,
+                    xanchor="center",
+                    yanchor="middle",
+                    showarrow=False,
+                )
+                return fig
+
             qf = cf.QuantFig(
-                get_data(),
+                data,
                 name=input.ticker(),
                 up_color="#44bb70",
                 down_color="#040548",
@@ -79,7 +95,12 @@ with ui.layout_columns(col_widths=[9, 3]):
 
         @render.data_frame
         def latest_data():
-            x = get_data()[:1].T.reset_index()
+            data = get_data()
+            if data.empty:
+                return pd.DataFrame({"Category": [], "Value": []})
+
+            latest_row = data.iloc[-1:]  # Get the last row
+            x = latest_row.T.reset_index()
             x.columns = ["Category", "Value"]
             x["Value"] = x["Value"].apply(lambda v: f"{v:.1f}")
             return x
@@ -101,7 +122,10 @@ def get_data():
 
 @reactive.calc
 def get_change():
-    close = get_data()["Close"]
+    data = get_data()
+    if data.empty:
+        return 0.0
+    close = data["Close"]
     if len(close) < 2:
         return 0.0
     return close.iloc[-1] - close.iloc[-2]
@@ -109,7 +133,10 @@ def get_change():
 
 @reactive.calc
 def get_change_percent():
-    close = get_data()["Close"]
+    data = get_data()
+    if data.empty:
+        return 0.0
+    close = data["Close"]
     if len(close) < 2:
         return 0.0
     change = close.iloc[-1] - close.iloc[-2]

@@ -3,15 +3,10 @@ from pathlib import Path
 import cufflinks as cf
 import pandas as pd
 import yfinance as yf
-from curl_cffi import requests
 from faicons import icon_svg
 from shiny import App, Inputs, Outputs, Session, reactive, render, ui
 from shinywidgets import output_widget, render_plotly
 from stocks import stocks
-
-# used to bypass financial APIs that have anti-bot measures in place
-session = requests.Session(impersonate="chrome")
-ticker = yf.Ticker("...", session=session)
 
 # Default to the last 6 months
 end = pd.Timestamp.now()
@@ -72,18 +67,31 @@ def server(input: Inputs, output: Outputs, session: Session):
 
     @reactive.calc
     def get_change():
-        close = get_data()["Close"]
+        data = get_data()
+        if data.empty:
+            return 0.0
+        close = data["Close"]
+        if len(close) < 2:
+            return 0.0
         return close.iloc[-1] - close.iloc[-2]
 
     @reactive.calc
     def get_change_percent():
-        close = get_data()["Close"]
+        data = get_data()
+        if data.empty:
+            return 0.0
+        close = data["Close"]
+        if len(close) < 2:
+            return 0.0
         change = close.iloc[-1] - close.iloc[-2]
         return change / close.iloc[-2] * 100
 
     @render.ui
     def price():
-        close = get_data()["Close"]
+        data = get_data()
+        if data.empty:
+            return "N/A"
+        close = data["Close"]
         return f"{close.iloc[-1]:.2f}"
 
     @render.ui
@@ -103,8 +111,26 @@ def server(input: Inputs, output: Outputs, session: Session):
 
     @render_plotly
     def price_history():
+        data = get_data()
+        if data.empty:
+            # Return an empty plotly figure if no data
+            import plotly.graph_objects as go
+
+            fig = go.Figure()
+            fig.add_annotation(
+                text="No data available for selected date range",
+                xref="paper",
+                yref="paper",
+                x=0.5,
+                y=0.5,
+                xanchor="center",
+                yanchor="middle",
+                showarrow=False,
+            )
+            return fig
+
         qf = cf.QuantFig(
-            get_data(),
+            data,
             name=input.ticker(),
             up_color="#44bb70",
             down_color="#040548",
@@ -122,21 +148,15 @@ def server(input: Inputs, output: Outputs, session: Session):
 
     @render.data_frame
     def latest_data():
-        data = get_data()[:1]  # Get latest row
+        data = get_data()
+        if data.empty:
+            return pd.DataFrame({"Category": [], "Value": []})
 
-        data.index = data.index.astype(str)
-        data = data.T
-
-        result = pd.DataFrame(
-            {
-                "Category": data.index,
-                "Value": data.values.flatten(),  # Flatten to 1D array
-            }
-        )
-
-        # Format values
-        result["Value"] = result["Value"].apply(lambda v: f"{v:.1f}")
-        return result
+        latest_row = data.iloc[-1:]  # Get the last row
+        x = latest_row.T.reset_index()
+        x.columns = ["Category", "Value"]
+        x["Value"] = x["Value"].apply(lambda v: f"{v:.1f}")
+        return x
 
 
 app = App(app_ui, server)

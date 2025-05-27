@@ -5,4 +5,3 @@ shiny
 shinywidgets
 faicons
 cufflinks
-curl-cffi
