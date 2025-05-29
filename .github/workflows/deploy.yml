@@ -53,8 +53,8 @@ jobs:
             if rsconnect deploy shiny ${{ matrix.folder }} \
               --name gallery \
               --entrypoint app-core.py \
-              --new
-              --title ${{ matrix.folder }}; then
+              --title ${{ matrix.folder }} \
+              --new; then
               echo "Deployment successful on attempt $i"
               exit 0
             else
