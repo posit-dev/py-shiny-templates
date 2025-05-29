@@ -32,7 +32,7 @@ jobs:
       - name: Set up Python
         uses: actions/setup-python@v5
         with:
-          python-version: "3.9.13"
+          python-version: "3.12"
       #- name: Cache deployment
       #  id: cache-deployment
       #  uses: actions/cache@v2
@@ -53,15 +53,15 @@ jobs:
             if rsconnect deploy shiny ${{ matrix.folder }} \
               --name gallery \
               --entrypoint app-core.py \
-              --title ${{ matrix.folder }} \
-              --new; then
+              -- new \
+              --title ${{ matrix.folder }}; then
               echo "Deployment successful on attempt $i"
               exit 0
             else
               echo "Deployment failed on attempt $i"
               if [ $i -eq 3 ]; then
-              echo "All deployment attempts failed"
-              exit 1
+                echo "All deployment attempts failed"
+                exit 1
               fi
               sleep 15
             fi
