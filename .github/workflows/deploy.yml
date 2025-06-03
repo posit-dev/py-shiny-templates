@@ -47,14 +47,17 @@ jobs:
           SECRET: ${{ secrets.SHINYAPPS_SECRET }}
         run: rsconnect add --account gallery --name gallery --token $TOKEN --secret $SECRET
       - name: Deploy app to shinyapps
+        env:
+          TOKEN: ${{ secrets.SHINYAPPS_TOKEN }}
+          SECRET: ${{ secrets.SHINYAPPS_SECRET }}
         run: |
           if [ -d "${{ matrix.folder }}" ]; then
             for i in {1..3}; do
               echo "Deployment attempt $i for ${{ matrix.folder }}"
               rsconnect deploy shiny "${{ matrix.folder }}" \
                 --account gallery \
-                --token $TOKEN \
-                --secret $SECRET \
+                --token "$TOKEN" \
+                --secret "$SECRET" \
                 --entrypoint app-core.py \
                 --title "${{ matrix.folder }}" \
                 --new && { echo "Deployment successful on attempt $i"; break; } || {
