@@ -54,7 +54,7 @@ jobs:
               rsconnect deploy shiny "${{ matrix.folder }}" \
                 --name gallery \
                 --entrypoint app-core.py \
-                --title "${{ matrix.folder }}" \
+                --title "template-${{ matrix.folder }}" \
                 --new && { echo "Deployment successful on attempt $i"; break; } || {
                   echo "Deployment failed on attempt $i"
                   if [ "$i" -eq 3 ]; then
