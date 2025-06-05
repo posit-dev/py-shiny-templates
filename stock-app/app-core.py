@@ -117,10 +117,21 @@ def server(input: Inputs, output: Outputs, session: Session):
 
     @render.data_frame
     def latest_data():
-        x = get_data()[:1].T.reset_index()
-        x.columns = ["Category", "Value"]
-        x["Value"] = x["Value"].apply(lambda v: f"{v:.1f}")
-        return x
+        data = get_data()[:1]  # Get latest row
+
+        data.index = data.index.astype(str)
+        data = data.T
+
+        result = pd.DataFrame(
+            {
+                "Category": data.index,
+                "Value": data.values.flatten(),  # Flatten to 1D array
+            }
+        )
+
+        # Format values
+        result["Value"] = result["Value"].apply(lambda v: f"{v:.1f}")
+        return result
 
 
 app = App(app_ui, server)

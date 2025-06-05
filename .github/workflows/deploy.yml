@@ -18,40 +18,68 @@ jobs:
         id: set-matrix
         run: |
           MATRIX_JSON=$(jq -c . < deployments.json)
-          echo "::set-output name=matrix::$MATRIX_JSON"
+          echo "matrix=$MATRIX_JSON" >> $GITHUB_OUTPUT
 
   deploy:
     needs: prepare-matrix
     runs-on: ubuntu-latest
+
+    concurrency:
+      group: deploy-${{ matrix.folder }}
+      # Wait for prior deployments to finish, otherwise new deployments will be rejected
+      cancel-in-progress: false
+
     strategy:
       fail-fast: false
-      matrix: ${{fromJson(needs.prepare-matrix.outputs.matrix)}}
+      matrix: ${{ fromJson(needs.prepare-matrix.outputs.matrix) }}
     steps:
       - name: Check out repository
         uses: actions/checkout@v4
       - name: Set up Python
         uses: actions/setup-python@v5
         with:
-          python-version: "3.9.13"
-      #- name: Cache deployment
-      #  id: cache-deployment
-      #  uses: actions/cache@v2
-      #  with:
-      #    path: ${{ matrix.folder }}
-      #    key: ${{ runner.os }}-deploy-${{ hashFiles(matrix.folder) }}
+          python-version: "3.12"
+
       - name: Install rsconnect-python
         run: pip install rsconnect-python
+
       - name: Configure rsconnect-python
         env:
           TOKEN: ${{ secrets.SHINYAPPS_TOKEN }}
           SECRET: ${{ secrets.SHINYAPPS_SECRET }}
         run: rsconnect add --account gallery --name gallery --token $TOKEN --secret $SECRET
+
       - name: Deploy app to shinyapps
         if: steps.cache-deployment.outputs.cache-hit != 'true'
         run: |
           for i in {1..3}; do
             rsconnect deploy shiny ${{ matrix.folder }} \
-              --name gallery \
-              --entrypoint app-core.py \
-              -a ${{ matrix.guid }} && break || sleep 15
+                --name gallery \
+                --entrypoint app-core.py \
+                --app-id ${{ matrix.guid }} \
+              && exit 0 \
+              || sleep 15
           done
+
+          echo "Deployment failed after 3 attempts"
+          exit 1
+
+  test-deploys:
+    name: Test Shiny Template Deployments
+    needs: deploy
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11.6"
+      - name: Install Python dependencies
+        run: |
+          python -m pip install --upgrade pip
+          make install
+      - name: Install Playwright browsers and OS dependencies
+        run: make install-playwright
+      - name: Run Shiny App Error Check
+        run: make test
