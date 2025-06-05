@@ -24,6 +24,11 @@ jobs:
     needs: prepare-matrix
     runs-on: ubuntu-latest
 
+    concurrency:
+      group: deploy-${{ matrix.folder }}
+      # Wait for prior deployments to finish, otherwise new deployments will be rejected
+      cancel-in-progress: false
+
     strategy:
       fail-fast: false
       matrix: ${{ fromJson(needs.prepare-matrix.outputs.matrix) }}
