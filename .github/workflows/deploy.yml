@@ -18,7 +18,7 @@ jobs:
         id: set-matrix
         run: |
           MATRIX_JSON=$(jq -c . < deployments.json)
-          run: echo "matrix=$MATRIX_JSON" >> $GITHUB_OUTPUT
+          echo "matrix=$MATRIX_JSON" >> $GITHUB_OUTPUT
 
   deploy:
     needs: prepare-matrix
