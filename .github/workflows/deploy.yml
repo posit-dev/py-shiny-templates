@@ -5,6 +5,7 @@ on:
     branches:
       - main
       - deploy**
+      - fix**
 
 jobs:
   prepare-matrix:
