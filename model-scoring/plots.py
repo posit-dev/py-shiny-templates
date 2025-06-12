@@ -33,7 +33,7 @@ def plot_auc_curve(df: DataFrame, true_col: str, pred_col: str):
         + geom_abline(intercept=0, slope=1, color="navy", linetype="dashed")
         + labs(
             title="Receiver Operating Characteristic (ROC)",
-            subtitle=f"AUC: {roc_auc.round(2)}",
+            subtitle=f"AUC: {round(roc_auc, 2)}",
             x="False Positive Rate",
             y="True Positive Rate",
         )
