@@ -1,7 +1,6 @@
-plotly < 6.0 # https://github.com/santosjorge/cufflinks/issues/289
+plotly
 yfinance
 pandas==2.2.1
 shiny
 shinywidgets
 faicons
-cufflinks

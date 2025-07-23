@@ -1,7 +1,7 @@
 from pathlib import Path
 
-import cufflinks as cf
 import pandas as pd
+import plotly.graph_objects as go
 import yfinance as yf
 from faicons import icon_svg
 from shiny import App, Inputs, Outputs, Session, reactive, render, ui
@@ -98,18 +98,38 @@ def server(input: Inputs, output: Outputs, session: Session):
 
     @render_plotly
     def price_history():
-        qf = cf.QuantFig(
-            get_data(),
-            name=input.ticker(),
-            up_color="#44bb70",
-            down_color="#040548",
-            legend="top",
+        df = get_data().reset_index()
+        fig = go.Figure(
+            data=[
+                go.Candlestick(
+                    x=df["Date"],
+                    open=df["Open"],
+                    high=df["High"],
+                    low=df["Low"],
+                    close=df["Close"],
+                    increasing_line_color="#44bb70",
+                    decreasing_line_color="#040548",
+                    name=input.ticker(),
+                )
+            ]
         )
-        qf.add_sma()
-        qf.add_volume(up_color="#44bb70", down_color="#040548")
-        fig = qf.figure()
+        df["SMA"] = df["Close"].rolling(window=20).mean()
+        fig.add_scatter(
+            x=df["Date"],
+            y=df["SMA"],
+            mode="lines",
+            name="SMA (20)",
+            line={"color": "orange", "dash": "dash"},
+        )
         fig.update_layout(
             hovermode="x unified",
+            legend={
+                "orientation": "h",
+                "yanchor": "top",
+                "y": 1,
+                "xanchor": "right",
+                "x": 1,
+            },
             paper_bgcolor="rgba(0,0,0,0)",
             plot_bgcolor="rgba(0,0,0,0)",
         )
