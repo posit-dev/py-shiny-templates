@@ -105,7 +105,9 @@ def server(input, output, session):
                 x[col] = (x[col].values > careers()[col].values).mean()
             return x
 
-        return d.groupby("person_id").apply(apply_func)
+        return d.groupby("person_id")[
+            ["person_id", "player_name", "color", *stats]
+        ].apply(apply_func, include_groups=False)
 
     # radar chart of player stats
     @render_plotly

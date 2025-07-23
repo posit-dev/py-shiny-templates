@@ -44,7 +44,12 @@ def apply_func(x):
     return res
 
 
-careers = careers[cols].groupby("person_id").apply(apply_func).reset_index()
+careers = (
+    careers[cols]
+    .groupby("person_id")
+    .apply(apply_func, include_groups=False)
+    .reset_index()
+)
 
 # Merge with players to get from_year and to_year
 careers = careers.merge(players[["person_id", "from_year", "to_year"]], on="person_id")

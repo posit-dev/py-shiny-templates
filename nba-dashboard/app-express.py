@@ -108,7 +108,7 @@ def percentiles():
             x[col] = (x[col].values > careers()[col].values).mean()
         return x
 
-    return d.groupby("person_id").apply(apply_func)
+    return d.groupby("person_id").apply(apply_func, include_groups=True)
 
 
 # When a player is clicked on the rug plot, add them to the selected players
