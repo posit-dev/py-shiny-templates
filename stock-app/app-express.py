@@ -88,6 +88,7 @@ with ui.layout_columns(col_widths=[9, 3]):
                 plot_bgcolor="rgba(0,0,0,0)",
             )
             return fig
+
     with ui.card():
         ui.card_header("Latest data")
 
