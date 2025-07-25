@@ -102,17 +102,13 @@ def player_stats():
 @reactive.calc
 def percentiles():
     d = player_stats()
-    careers_data = careers()
 
     def apply_func(x):
-        result = x.copy()
         for col in stats:
-            result[col] = (x[col].values > careers_data[col].values).mean()
-        return result
+            x[col] = (x[col].values > careers()[col].values).mean()
+        return x
 
-    result = d.groupby("person_id").apply(apply_func, include_groups=False)
-    result = result.reset_index()
-    return result
+    return d.groupby("person_id").apply(apply_func, include_groups=False)
 
 
 # When a player is clicked on the rug plot, add them to the selected players
