@@ -10,6 +10,8 @@ BASE_PATH = Path(__file__).parent.resolve()
 DEFAULT_PORT = 8081
 STARTUP_DELAY = 5
 REQUEST_TIMEOUT = 5
+GITHUB_REPO_URL = "https://github.com/posit-dev/py-shiny-templates"
+GITHUB_BRANCH = "main"
 
 FOLDER_STRUCTURE = {
     "langchain": ["basic", "structured_output", "tool_calling"],
@@ -46,7 +48,8 @@ app_ui = ui.page_sidebar(
     ),
     ui.h1("Shiny Chat Preview with Different Providers"),
     ui.p(
-        "Select a category and subcategory to run the app " "and view its source code."
+        "Select a category and subcategory to run the app "
+        "and view its source code."
     ),
     ui.div(
         ui.output_ui("embedded_app"),
@@ -124,7 +127,8 @@ def server(input: Inputs, output: Outputs, session: Session):
 
         if main_cat and main_cat in FOLDER_STRUCTURE:
             sub_choices = {
-                sub: sub.replace("_", " ").title() for sub in FOLDER_STRUCTURE[main_cat]
+                sub: sub.replace("_", " ").title()
+                for sub in FOLDER_STRUCTURE[main_cat]
             }
             choices = {"": "Choose a subcategory..."} | sub_choices
         else:
@@ -216,16 +220,20 @@ def server(input: Inputs, output: Outputs, session: Session):
         app_path = get_selected_app_path()
 
         if not app_path:
-            return ui.p("# Select a category and subcategory to view the source code")
+            return ui.p(
+                "# Select a category and subcategory to view the source code"
+            )
 
         if not app_path.exists():
             return ui.p(f"# Error: File not found at {app_path}")
 
         rel_path = app_path.relative_to(BASE_PATH.parent)
+        github_url = f"{GITHUB_REPO_URL}/blob/{GITHUB_BRANCH}/{rel_path}"
+        
         return ui.p(
             ui.a(
                 f"View source: {rel_path}",
-                href=f"file://{app_path}",
+                href=github_url,
                 target="_blank",
                 style="font-weight: bold;",
             )
