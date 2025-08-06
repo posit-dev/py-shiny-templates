@@ -14,9 +14,7 @@ class Joke(BaseModel):
 
     setup: str = Field(description="The setup of the joke")
     punchline: str = Field(description="The punchline to the joke")
-    rating: Optional[int] = Field(
-        description="How funny the joke is, from 1 to 10"
-    )
+    rating: Optional[int] = Field(description="How funny the joke is, from 1 to 10")
 
 
 _ = Joke.model_rebuild()

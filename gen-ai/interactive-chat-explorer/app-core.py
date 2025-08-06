@@ -48,8 +48,7 @@ app_ui = ui.page_sidebar(
     ),
     ui.h1("Shiny Chat Preview with Different Providers"),
     ui.p(
-        "Select a category and subcategory to run the app "
-        "and view its source code."
+        "Select a category and subcategory to run the app " "and view its source code."
     ),
     ui.div(
         ui.output_ui("embedded_app"),
@@ -76,7 +75,7 @@ def server(input: Inputs, output: Outputs, session: Session):
                 "-m",
                 "shiny",
                 "run",
-                "app.py",
+                "app-core.py",
                 "--port",
                 str(port),
                 "--host",
@@ -127,8 +126,7 @@ def server(input: Inputs, output: Outputs, session: Session):
 
         if main_cat and main_cat in FOLDER_STRUCTURE:
             sub_choices = {
-                sub: sub.replace("_", " ").title()
-                for sub in FOLDER_STRUCTURE[main_cat]
+                sub: sub.replace("_", " ").title() for sub in FOLDER_STRUCTURE[main_cat]
             }
             choices = {"": "Choose a subcategory..."} | sub_choices
         else:
@@ -141,7 +139,7 @@ def server(input: Inputs, output: Outputs, session: Session):
         main_cat = input.main_category()
         sub_cat = input.sub_category()
         if main_cat and sub_cat:
-            return BASE_PATH / main_cat / sub_cat / "app.py"
+            return BASE_PATH / main_cat / sub_cat / "app-core.py"
         return None
 
     def format_title(main_cat: str, sub_cat: str) -> str:
@@ -220,16 +218,14 @@ def server(input: Inputs, output: Outputs, session: Session):
         app_path = get_selected_app_path()
 
         if not app_path:
-            return ui.p(
-                "# Select a category and subcategory to view the source code"
-            )
+            return ui.p("# Select a category and subcategory to view the source code")
 
         if not app_path.exists():
             return ui.p(f"# Error: File not found at {app_path}")
 
         rel_path = app_path.relative_to(BASE_PATH.parent)
         github_url = f"{GITHUB_REPO_URL}/blob/{GITHUB_BRANCH}/{rel_path}"
-        
+
         return ui.p(
             ui.a(
                 f"View source: {rel_path}",

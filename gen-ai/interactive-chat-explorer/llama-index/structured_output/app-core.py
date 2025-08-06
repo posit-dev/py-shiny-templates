@@ -15,9 +15,7 @@ class AnalysisResponse(BaseModel):
 
     summary: str = Field(description="Executive summary of the analysis")
     detailed_analysis: str = Field(description="Detailed analysis content")
-    methodology: Optional[str] = Field(
-        description="Methodology used for analysis"
-    )
+    methodology: Optional[str] = Field(description="Methodology used for analysis")
     conclusions: List[str] = Field(description="Key conclusions drawn")
     recommendations: Optional[List[str]] = Field(
         description="Actionable recommendations"
