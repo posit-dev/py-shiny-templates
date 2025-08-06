@@ -1,0 +1,4 @@
+shiny
+openai
+dotenv
+llm

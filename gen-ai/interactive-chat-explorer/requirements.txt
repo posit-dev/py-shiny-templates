@@ -1,0 +1,5 @@
+
+-r langchain/requirements.txt
+-r llama-index/requirements.txt
+-r llm_package/requirements.txt
+-r pydantic-ai/requirements.txt
