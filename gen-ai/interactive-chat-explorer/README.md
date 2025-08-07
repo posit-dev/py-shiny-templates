@@ -23,11 +23,6 @@ This app lets you preview and run different Shiny for Python chat apps from mult
    - The selected app will launch and display in the main panel.
    - You can view the source code for each app via the provided GitHub link.
 
-## Features
-- Instantly preview chat apps from different providers
-- Toggle between categories and subcategories to explore various implementations
-- View source code for each app directly on GitHub
-
 ## Troubleshooting
 - If an app fails to start, check that its dependencies are installed and its code is valid.
 - Only one app runs at a time; switching selection will stop the previous app and start the new one.
