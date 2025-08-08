@@ -184,11 +184,12 @@ def server(input: Inputs, output: Outputs, session: Session):
 
             if app_started:
                 return ui.card(
-                    ui.card_header("📚 Example App"),
-                    ui.output_ui("card_body", fill=True, fillable=True),
-                    ui.card_footer(
-                        ui.input_action_link("view_source", "View Source Code")
+                    ui.card_header(
+                        "Example App",
+                        ui.input_action_link("view_source", ""),
+                        class_="d-flex justify-content-between align-items-center",
                     ),
+                    ui.output_ui("card_body", fill=True, fillable=True),
                 )
             else:
                 return ui.div(
@@ -220,7 +221,7 @@ def server(input: Inputs, output: Outputs, session: Session):
         github_url = f"{GITHUB_REPO_URL}/blob/{GITHUB_BRANCH}/{rel_path}"
 
         if (input.view_source() % 2) == 0:
-            ui.update_action_link("view_source", label="View Source Code")
+            ui.update_action_link("view_source", label="📝 View Source Code")
 
             return ui.tags.iframe(
                 src=f"http://127.0.0.1:{DEFAULT_PORT}",
@@ -229,7 +230,7 @@ def server(input: Inputs, output: Outputs, session: Session):
                 style="min-height: 500px;",
             )
         else:
-            ui.update_action_link("view_source", label="View Example App")
+            ui.update_action_link("view_source", label="👀 View App")
 
             code = app_path.read_text()
             content = f"[View on GitHub]({github_url})\n\n```python\n{code}\n```\n"
