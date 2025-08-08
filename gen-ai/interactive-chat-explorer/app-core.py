@@ -4,7 +4,7 @@ import time
 from pathlib import Path
 
 import requests
-from shiny import App, Inputs, Outputs, Session, reactive, render, ui
+from shiny import App, Inputs, Outputs, Session, reactive, render, req, ui
 
 BASE_PATH = Path(__file__).parent.resolve()
 DEFAULT_PORT = 8081
@@ -29,37 +29,26 @@ FOLDER_STRUCTURE = {
 
 app_ui = ui.page_sidebar(
     ui.sidebar(
-        ui.h3("Interactive Chat Explorer"),
-        ui.br(),
         ui.input_select(
             "main_category",
-            "📁 Select Category:",
-            choices={"": "Choose a category..."}
+            "🤖 AI Framework",
+            choices={"": "Choose a framework..."}
             | {k: k.title() for k in FOLDER_STRUCTURE.keys()},
             selected="",
         ),
-        ui.br(),
-        ui.input_select(
-            "sub_category",
-            "📂 Select Subcategory:",
-            choices={"": "First select a category..."},
-            selected="",
+        ui.panel_conditional(
+            "input.main_category != ''",
+            ui.input_select(
+                "sub_category",
+                "📂 Example category",
+                choices=[],
+            ),
         ),
-        ui.br(),
-        width=350,
+        open={"mobile": "always-above"},
     ),
-    ui.h1("Shiny Chat Preview with Different Providers"),
-    ui.p(
-        "Select a category and subcategory to run the app " "and view its source code."
-    ),
-    ui.div(
-        ui.output_ui("embedded_app"),
-        ui.br(),
-        ui.h3("📋 Source Code"),
-        ui.output_ui("app_source"),
-        id="main_content",
-    ),
-    title="Shiny Interactive Chat Explorer",
+    ui.output_ui("embedded_app", fill=True, fillable=True),
+    title="Shiny Chat + AI Framework Chooser",
+    fillable=True,
 )
 
 
@@ -152,42 +141,36 @@ def server(input: Inputs, output: Outputs, session: Session):
         main_cat = input.main_category()
 
         if main_cat and main_cat in FOLDER_STRUCTURE:
-            sub_choices = {
+            choices = {
                 sub: sub.replace("_", " ").title() for sub in FOLDER_STRUCTURE[main_cat]
             }
-            choices = {"": "Choose a subcategory..."} | sub_choices
-        else:
-            choices = {"": "First select a category..."}
-
-        ui.update_select("sub_category", choices=choices, selected="")
+            ui.update_select("sub_category", choices=choices)
 
     @reactive.calc
     def get_selected_app_path():
-        main_cat = input.main_category()
-        sub_cat = input.sub_category()
+        main_cat = req(input.main_category())
+        sub_cat = req(input.sub_category())
         if main_cat and sub_cat:
             return BASE_PATH / main_cat / sub_cat / "app-core.py"
         return None
 
-    def format_title(main_cat: str, sub_cat: str) -> str:
-        formatted_sub = sub_cat.replace("_", " ").title()
-        return f"🤖 Running: {main_cat.title()} - {formatted_sub}"
-
     @render.ui
     def embedded_app():
-        app_path = get_selected_app_path()
-        main_cat = input.main_category()
-        sub_cat = input.sub_category()
-
-        if not app_path:
+        if not input.main_category():
             return ui.div(
-                ui.h4("Select an App to Run"),
-                ui.p(
-                    "Choose a category and subcategory from the sidebar "
-                    "to run a chat app."
-                ),
+                ui.h4("Select an AI framework"),
+                ui.p("This framework will power the chat responses."),
                 class_="text-center text-muted p-5",
             )
+
+        if not input.sub_category():
+            return ui.div(
+                ui.h4("Select an example category"),
+                ui.p("This will load a specific example app."),
+                class_="text-center text-muted p-5",
+            )
+
+        app_path = get_selected_app_path()
 
         if not app_path.exists():
             return ui.div(
@@ -200,26 +183,12 @@ def server(input: Inputs, output: Outputs, session: Session):
             app_started = start_app_process(app_path, DEFAULT_PORT)
 
             if app_started:
-                return ui.div(
-                    ui.h4(format_title(main_cat, sub_cat)),
-                    ui.p(f"📍 Path: {app_path.relative_to(BASE_PATH.parent)}"),
-                    ui.hr(),
-                    ui.div(
-                        ui.HTML(
-                            f"""
-                            <iframe
-                                src="http://127.0.0.1:{DEFAULT_PORT}"
-                                width="100%"
-                                height="600px"
-                                frameborder="0"
-                                style="border: 1px solid #ddd;
-                                       border-radius: 8px;">
-                            </iframe>
-                        """
-                        ),
-                        class_="mb-3",
+                return ui.card(
+                    ui.card_header("📚 Example App"),
+                    ui.output_ui("card_body", fill=True, fillable=True),
+                    ui.card_footer(
+                        ui.input_action_link("view_source", "View Source Code")
                     ),
-                    class_="bg-light p-3 rounded",
                 )
             else:
                 return ui.div(
@@ -241,26 +210,30 @@ def server(input: Inputs, output: Outputs, session: Session):
             )
 
     @render.ui
-    def app_source():
+    def card_body():
         app_path = get_selected_app_path()
 
-        if not app_path:
-            return ui.p("# Select a category and subcategory to view the source code")
-
         if not app_path.exists():
-            return ui.p(f"# Error: File not found at {app_path}")
+            return ui.notification_show(f"# Error: File not found at {app_path}")
 
         rel_path = app_path.relative_to(BASE_PATH.parent)
         github_url = f"{GITHUB_REPO_URL}/blob/{GITHUB_BRANCH}/{rel_path}"
 
-        return ui.p(
-            ui.a(
-                f"View source: {rel_path}",
-                href=github_url,
-                target="_blank",
-                style="font-weight: bold;",
+        if (input.view_source() % 2) == 0:
+            ui.update_action_link("view_source", label="View Source Code")
+
+            return ui.tags.iframe(
+                src=f"http://127.0.0.1:{DEFAULT_PORT}",
+                frameborder="0",
+                class_="html-fill-item html-fill-container",
+                style="min-height: 500px;",
             )
-        )
+        else:
+            ui.update_action_link("view_source", label="View Example App")
+
+            code = app_path.read_text()
+            content = f"[View on GitHub]({github_url})\n\n```python\n{code}\n```\n"
+            return ui.markdown(content)
 
 
 app = App(app_ui, server)
