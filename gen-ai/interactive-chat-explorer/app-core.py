@@ -12,6 +12,8 @@ STARTUP_DELAY = 5
 REQUEST_TIMEOUT = 5
 GITHUB_REPO_URL = "https://github.com/posit-dev/py-shiny-templates"
 GITHUB_BRANCH = "main"
+STARTUP_TIMEOUT = 10
+STARTUP_POLL_INTERVAL = 0.2
 
 FOLDER_STRUCTURE = {
     "langchain": ["basic", "structured_output", "tool_calling"],
@@ -65,8 +67,18 @@ current_process = None
 
 
 def server(input: Inputs, output: Outputs, session: Session):
+    current_app_path = None
+
+    def is_process_running() -> bool:
+        return current_process is not None and current_process.poll() is None
+
     def start_app_process(app_path: Path, port: int = DEFAULT_PORT) -> bool:
+        nonlocal current_app_path
         global current_process
+
+        if current_app_path == app_path and is_process_running():
+            return True
+
         stop_current_process()
 
         try:
@@ -85,20 +97,26 @@ def server(input: Inputs, output: Outputs, session: Session):
             current_process = subprocess.Popen(
                 cmd,
                 cwd=str(app_path.parent),
-                stdout=subprocess.PIPE,
-                stderr=subprocess.PIPE,
+                stdout=subprocess.DEVNULL,
+                stderr=subprocess.DEVNULL,
                 text=True,
             )
 
-            time.sleep(STARTUP_DELAY)
+            start_time = time.time()
+            url = f"http://127.0.0.1:{port}"
+            while time.time() - start_time < STARTUP_TIMEOUT:
+                if current_process.poll() is not None:
+                    return False
+                try:
+                    resp = requests.get(url, timeout=REQUEST_TIMEOUT)
+                    if resp.status_code == 200:
+                        current_app_path = app_path
+                        return True
+                except Exception:
+                    pass
+                time.sleep(STARTUP_POLL_INTERVAL)
 
-            try:
-                response = requests.get(
-                    f"http://127.0.0.1:{port}", timeout=REQUEST_TIMEOUT
-                )
-                return response.status_code == 200
-            except Exception:
-                return False
+            return False
 
         except Exception as e:
             print(f"Error starting app: {e}")
@@ -118,6 +136,15 @@ def server(input: Inputs, output: Outputs, session: Session):
                 current_process = None
 
     session.on_ended(lambda: stop_current_process())
+
+    @reactive.effect
+    @reactive.event(input.main_category, input.sub_category)
+    def stop_on_clear_selection():
+        nonlocal current_app_path
+        app_path = get_selected_app_path()
+        if not app_path and is_process_running():
+            stop_current_process()
+            current_app_path = None
 
     @reactive.effect
     @reactive.event(input.main_category)
