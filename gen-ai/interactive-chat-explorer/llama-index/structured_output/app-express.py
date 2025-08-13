@@ -27,7 +27,7 @@ _ = AnalysisResponse.model_rebuild()
 llm = OpenAI(model="gpt-4.1-nano-2025-04-14")
 
 ui.page_opts(
-    title="Analysis Assistant",
+    title="Shiny Chat - Structured Analysis using llama-index",
     fillable=True,
     fillable_mobile=True,
 )
@@ -35,7 +35,7 @@ ui.page_opts(
 agent = FunctionAgent(
     tools=[],
     llm=llm,
-    system_prompt="""You are an analytical assistant that provides thorough analysis. 
+    system_prompt="""You are an analytical assistant that provides thorough analysis.
     Be clear, concise, and analytical in your responses.""",
 )
 

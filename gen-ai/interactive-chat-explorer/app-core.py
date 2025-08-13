@@ -19,12 +19,18 @@ FOLDER_STRUCTURE = {
     "langchain": ["basic", "structured_output", "tool_calling"],
     "llama-index": [
         "basic",
-        "rag_with_chatlas",
         "structured_output",
         "tool_calling",
     ],
     "llm_package": ["basic", "structured_output", "tool_calling"],
     "pydantic-ai": ["basic", "structured_output", "tool_calling"],
+}
+
+FRAMEWORK_LABELS = {
+    "langchain": "LangChain",
+    "llama-index": "LlamaIndex",
+    "llm_package": "llm package",
+    "pydantic-ai": "Pydantic AI",
 }
 
 app_ui = ui.page_sidebar(
@@ -33,7 +39,7 @@ app_ui = ui.page_sidebar(
             "main_category",
             "🤖 AI Framework",
             choices={"": "Choose a framework..."}
-            | {k: k.title() for k in FOLDER_STRUCTURE.keys()},
+            | {k: FRAMEWORK_LABELS.get(k, k) for k in FOLDER_STRUCTURE.keys()},
             selected="",
         ),
         ui.panel_conditional(
@@ -76,7 +82,7 @@ def server(input: Inputs, output: Outputs, session: Session):
                 "-m",
                 "shiny",
                 "run",
-                "app-core.py",
+                "app-express.py",
                 "--port",
                 str(port),
                 "--host",
@@ -151,7 +157,7 @@ def server(input: Inputs, output: Outputs, session: Session):
         main_cat = req(input.main_category())
         sub_cat = req(input.sub_category())
         if main_cat and sub_cat:
-            return BASE_PATH / main_cat / sub_cat / "app-core.py"
+            return BASE_PATH / main_cat / sub_cat / "app-express.py"
         return None
 
     @render.ui
@@ -187,7 +193,7 @@ def server(input: Inputs, output: Outputs, session: Session):
                     ui.card_header(
                         "Example App",
                         ui.input_action_link("view_source", ""),
-                        class_="d-flex justify-content-between align-items-center",
+                        class_=("d-flex justify-content-between " "align-items-center"),
                     ),
                     ui.output_ui("card_body", fill=True, fillable=True),
                 )
@@ -233,7 +239,9 @@ def server(input: Inputs, output: Outputs, session: Session):
             ui.update_action_link("view_source", label="👀 View App")
 
             code = app_path.read_text()
-            content = f"[View on GitHub]({github_url})\n\n```python\n{code}\n```\n"
+            content = (
+                f"[View on GitHub]({github_url})\n\n" + "```python\n" + code + "\n```\n"
+            )
             return ui.markdown(content)
 
 

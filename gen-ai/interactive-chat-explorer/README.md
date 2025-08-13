@@ -7,17 +7,42 @@ This app lets you preview and run different Shiny for Python chat apps from mult
 1. **Install dependencies**
 
    From this folder, run:
+
    ```bash
    pip install -r requirements.txt
    ```
 
-2. **Run the main Shiny app**
+2. **Environment Configuration**
+
+   Create a `.env` file in this folder with the necessary API key for the chat apps you want to run.
+
+   ```sh
+   touch .env
+   ```
+
+   ### Add API Keys
+
+   Open the .env file and add your API credentials:
+
+   ```sh
+   OPENAI_API_KEY=your_actual_openai_api_key_here
+   ```
+
+   #### Obtaining Your OpenAI API Key
+
+   1. Visit the [OpenAI Platform](https://platform.openai.com/api-keys)
+   2. Sign in to your account or create a new one
+   3. Navigate to the API Keys section
+   4. Click "Create new secret key"
+   5. Copy the generated key and paste it into your `.env` file
+
+3. **Run the main Shiny app**
 
    ```bash
    shiny run app-core.py
    ```
 
-3. **Preview different apps**
+4. **Preview different apps**
 
    - Use the sidebar to select a **Category** and **Subcategory**.
    - The selected app will launch and display in the main panel.

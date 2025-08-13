@@ -25,7 +25,7 @@ chat_client = ChatOpenAI(
 )
 
 ui.page_opts(
-    title="Hello LangChain Chat Model using structured output",
+    title="LangChain Chat Model using structured output",
     fillable=True,
     fillable_mobile=True,
 )

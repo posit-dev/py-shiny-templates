@@ -18,7 +18,7 @@ model = llm.get_model("gpt-4o-mini")
 model.system_prompt = "You are a helpful assistant."
 
 ui.page_opts(
-    title="Hello LLM Chat",
+    title="Structured Output Example using llm package",
     fillable=True,
     fillable_mobile=True,
 )

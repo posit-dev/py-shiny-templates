@@ -18,7 +18,7 @@ model.system_prompt = "You are a helpful assistant."
 
 
 ui.page_opts(
-    title="Hello LLM Chat",
+    title="Tool Calling Example using llm package",
     fillable=True,
     fillable_mobile=True,
 )

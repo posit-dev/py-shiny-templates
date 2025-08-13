@@ -11,7 +11,7 @@ model.system_prompt = "You are a helpful assistant."
 conversation = model.conversation()
 
 ui.page_opts(
-    title="Hello LLM Chat",
+    title="Basic llm package Chat Example",
     fillable=True,
     fillable_mobile=True,
 )

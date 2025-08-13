@@ -1,0 +1,16 @@
+{
+  "type": "app",
+  "id": "pydantic-ai-tool-calling-chat",
+  "title": "Tool Calling with Pydantic-AI",
+  "description": "Demonstrates invoking and validating tool calls with Pydantic-AI patterns.",
+  "next_steps": [
+    "Insert your API key(s) into template.env and rename it to .env.",
+    "Run the app with shiny run app-express.py."
+  ],
+  "follow_up": [
+    { "type": "info", "text": "Need an API key?" },
+    { "type": "action", "text": "https://platform.openai.com/api-keys" },
+    { "type": "info", "text": "Pydantic docs" },
+    { "type": "action", "text": "https://docs.pydantic.dev" }
+  ]
+}

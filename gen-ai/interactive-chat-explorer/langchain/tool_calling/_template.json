@@ -1,0 +1,16 @@
+{
+  "type": "app",
+  "id": "langchain-tool-calling-chat",
+  "title": "LangChain Chat with Tool Calling",
+  "description": "Demonstrates using LangChain to enable the model to select and invoke tools/functions during a chat session.",
+  "next_steps": [
+    "Put your OPENAI or ANTHROPIC API key in the template.env file and rename it to .env.",
+    "Run the app with shiny run app-express.py."
+  ],
+  "follow_up": [
+    { "type": "info", "text": "Need help obtaining an API key?" },
+    { "type": "action", "text": "Visit https://platform.openai.com/api-keys" },
+    { "type": "info", "text": "Want to learn more about LangChain tool use?" },
+    { "type": "action", "text": "See https://python.langchain.com/docs/how_to/tool_calling" }
+  ]
+}
