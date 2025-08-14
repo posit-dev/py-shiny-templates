@@ -28,7 +28,7 @@ def get_current_date() -> str:
 @tool
 def get_current_weather(city: str) -> str:
     """Get the current weather for a given city."""
-    return f"The current weather in {city} is sunny with a temperature of 25°C."
+    return f"The current weather in {city} is sunny with a temperature of 25\u00b0C."
 
 
 @tool

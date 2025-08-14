@@ -37,9 +37,9 @@ chat.ui(
             "content": """
 Hello! Ask me where the superbowl was held in any year and I can tell the state, county, and city.
 For example, you can ask:
-- <span class="suggestion"> Where was the superbowl in 2020? </span>
-- <span class="suggestion"> What city hosted the superbowl in 2015? </span>
-- <span class="suggestion"> Where was the superbowl in 2018? </span>
+- <span class=\"suggestion\"> Where was the superbowl in 2020? </span>
+- <span class=\"suggestion\"> What city hosted the superbowl in 2015? </span>
+- <span class=\"suggestion\"> Where was the superbowl in 2018? </span>
 """,
         }
     ],

@@ -1,0 +1,6 @@
+shiny
+llama-index
+llama-index-llms-openai
+dotenv
+pydantic
+chatlas

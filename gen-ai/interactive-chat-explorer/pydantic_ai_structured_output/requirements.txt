@@ -1,0 +1,4 @@
+shiny
+pydantic-ai
+dotenv
+pydantic

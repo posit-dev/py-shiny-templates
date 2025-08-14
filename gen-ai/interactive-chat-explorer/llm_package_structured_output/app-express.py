@@ -33,9 +33,9 @@ chat.ui(
             "content": """
 Here are some examples of what you can ask me:
 
-- <span class="suggestion"> Tell me about a dog named Bella who is 3 years old. </span>
-- <span class="suggestion"> I have a dog named Rocky, age 7. </span>
-- <span class="suggestion"> Give me info about a puppy called Luna, 1 year old. </span>
+- <span class=\"suggestion\"> Tell me about a dog named Bella who is 3 years old. </span>
+- <span class=\"suggestion\"> I have a dog named Rocky, age 7. </span>
+- <span class=\"suggestion\"> Give me info about a puppy called Luna, 1 year old. </span>
             """,
             "role": "assistant",
         }

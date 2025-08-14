@@ -22,7 +22,7 @@ chat = ui.Chat(
 chat.ui(
     messages=[
         {
-            "content": "Hello! I’m your AI assistant for capital cities of the world and their countries. Ask me about the capital city of any country, and I’ll provide the answer. How can I assist you today?",
+            "content": "Hello! Im your AI assistant for capital cities of the world and their countries. Ask me about the capital city of any country, and Ill provide the answer. How can I assist you today?",
             "role": "assistant",
         }
     ]

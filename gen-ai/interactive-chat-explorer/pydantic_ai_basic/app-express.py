@@ -26,7 +26,7 @@ chat = ui.Chat(
 chat.ui(
     messages=[
         {
-            "content": "Hello! I’m your AI assistant. You can ask me questions, get explanations, or help with tasks like brainstorming, summarizing, or coding. How can I assist you today?",
+            "content": "Hello! I\u2019m your AI assistant. You can ask me questions, get explanations, or help with tasks like brainstorming, summarizing, or coding. How can I assist you today?",
             "role": "user",
         }
     ]

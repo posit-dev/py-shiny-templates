@@ -1,5 +1,3 @@
-import os
-
 from dotenv import load_dotenv
 from pydantic_ai import Agent
 from shiny.express import ui
@@ -14,7 +12,9 @@ chat_client = Agent(
 @chat_client.tool_plain
 def get_weather(location: str) -> str:
     """Get the current weather for a given location."""
-    return f"The current weather in {location} is sunny with a temperature of 25°C."
+    return (
+        f"The current weather in {location} is sunny with a temperature of 25\u00b0C."
+    )
 
 
 @chat_client.tool_plain
