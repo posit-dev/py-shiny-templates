@@ -1,6 +1,6 @@
 # Interactive Chat Explorer
 
-This app lets you preview and run different Shiny for Python chat apps from multiple providers (LangChain, LlamaIndex, LLM Package, Pydantic-AI) in a single interface.
+This app lets you preview and run different Shiny for Python chat apps from multiple frameworks (LangChain, LlamaIndex, LLM Package, Pydantic-AI) in a single interface.
 
 ## Setup Instructions
 
@@ -49,6 +49,7 @@ This app lets you preview and run different Shiny for Python chat apps from mult
    - You can view the source code for each app via the provided GitHub link.
 
 ## Troubleshooting
+
 - If an app fails to start, check that its dependencies are installed and its code is valid.
 - Only one app runs at a time; switching selection will stop the previous app and start the new one.
 
