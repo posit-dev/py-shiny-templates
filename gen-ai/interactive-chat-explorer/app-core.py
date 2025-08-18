@@ -1,3 +1,5 @@
+from pathlib import Path
+
 from shiny import App, Inputs, Outputs, Session, reactive, render, req, ui
 
 FOLDER_STRUCTURE = {
@@ -44,16 +46,27 @@ app_ui = ui.page_sidebar(
 
 
 def server(input: Inputs, output: Outputs, session: Session):
+    show_source = reactive.Value(False)
+
     @reactive.effect
     @reactive.event(input.main_category)
     def update_sub_category():
         main_cat = input.main_category()
-
         if main_cat and main_cat in FOLDER_STRUCTURE:
             choices = {
                 sub: sub.replace("-", " ").title() for sub in FOLDER_STRUCTURE[main_cat]
             }
             ui.update_select("sub_category", choices=choices)
+
+    @reactive.effect
+    @reactive.event(input.main_category, input.sub_category)
+    def reset_view_mode():
+        show_source.set(False)
+
+    @reactive.effect
+    @reactive.event(input.toggle_view)
+    def _toggle_view():
+        show_source.set(not show_source())
 
     @render.ui
     def embedded_app():
@@ -73,12 +86,55 @@ def server(input: Inputs, output: Outputs, session: Session):
 
         main_cat = req(input.main_category())
         sub_cat = req(input.sub_category())
-        url = f"https://posit-ai-{main_cat}-{sub_cat}.share.connect.posit.cloud/"
-        return ui.tags.iframe(
-            src=url,
-            frameborder="0",
+        url = f"https://posit-ai-{main_cat}-{sub_cat}." "share.connect.posit.cloud/"
+
+        toggle_label = "▶️ View App" if show_source() else "📝 View Source Code"
+        header = ui.card_header(
+            ui.div(
+                ui.div("Example App", class_="fw-semibold"),
+                ui.div(
+                    ui.input_action_link(
+                        "toggle_view",
+                        toggle_label,
+                        class_="text-decoration-none",
+                    ),
+                    class_="ms-auto",
+                ),
+                class_=("d-flex justify-content-between " "align-items-center w-100"),
+            )
+        )
+
+        if show_source():
+            base_dir = Path(__file__).parent
+            source_path = base_dir / f"{main_cat}-{sub_cat}" / "app-express.py"
+            try:
+                code_text = source_path.read_text(encoding="utf-8")
+            except Exception as e:
+                code_text = "Could not load source: " f"{source_path}\n\nError: {e}"
+
+            title_txt = (
+                f"{FRAMEWORK_LABELS.get(main_cat, main_cat)} "
+                f"· {sub_cat.replace('-', ' ').title()}"
+            )
+            markdown_txt = f"### {title_txt}\n\n" "```python\n" f"{code_text}\n" "```"
+            body = ui.card_body(
+                ui.markdown(markdown_txt),
+                class_="overflow-auto",
+            )
+        else:
+            body = ui.card_body(
+                ui.tags.iframe(
+                    src=url,
+                    frameborder="0",
+                    class_="html-fill-item html-fill-container",
+                    style="min-height: 600px;",
+                )
+            )
+
+        return ui.card(
+            header,
+            body,
             class_="html-fill-item html-fill-container",
-            style="min-height: 500px;",
         )
 
 
