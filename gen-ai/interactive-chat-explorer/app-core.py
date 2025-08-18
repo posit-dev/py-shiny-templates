@@ -40,6 +40,21 @@ app_ui = ui.page_sidebar(
         open={"mobile": "always-above"},
     ),
     ui.output_ui("embedded_app", fill=True, fillable=True),
+    ui.head_content(
+        ui.tags.link(
+            rel="stylesheet",
+            href=(
+                "https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/"
+                "styles/github.min.css"
+            ),
+        ),
+        ui.tags.script(
+            src=(
+                "https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/"
+                "highlight.min.js"
+            )
+        ),
+    ),
     title="Shiny Chat + AI Framework Chooser",
     fillable=True,
 )
@@ -116,9 +131,50 @@ def server(input: Inputs, output: Outputs, session: Session):
                 f"{FRAMEWORK_LABELS.get(main_cat, main_cat)} "
                 f"· {sub_cat.replace('-', ' ').title()}"
             )
-            markdown_txt = f"### {title_txt}\n\n" "```python\n" f"{code_text}\n" "```"
+            code_id = f"source_code_{main_cat}_{sub_cat}"
+            copy_js = (
+                "(function(btn){\n"
+                f"  var el = document.getElementById('{code_id}');\n"
+                "  if (!el) return;\n"
+                "  navigator.clipboard.writeText(el.innerText)\n"
+                "    .then(function(){\n"
+                "    var old = btn.innerText;\n"
+                "    btn.innerText = 'Copied';\n"
+                "    setTimeout(function(){ btn.innerText = old; }, 1500);\n"
+                "  });\n"
+                "})(this); return false;"
+            )
+            toolbar = ui.div(
+                ui.tags.span(title_txt, class_="fw-semibold"),
+                ui.tags.button(
+                    "Copy code",
+                    class_="btn btn-sm btn-outline-secondary",
+                    onclick=copy_js,
+                ),
+                class_=("d-flex justify-content-between align-items-center mb-2"),
+            )
+            code_block = ui.tags.pre(
+                ui.tags.code(
+                    code_text,
+                    id=code_id,
+                    class_="language-python",
+                ),
+                class_="mb-0",
+            )
+            highlight_script = ui.tags.script(
+                (
+                    "(function(){\n"
+                    f"  var el = document.getElementById('{code_id}');\n"
+                    "  if (el && window.hljs) {\n"
+                    "    window.hljs.highlightElement(el);\n"
+                    "  }\n"
+                    "})();"
+                )
+            )
             body = ui.card_body(
-                ui.markdown(markdown_txt),
+                toolbar,
+                code_block,
+                highlight_script,
                 class_="overflow-auto",
             )
         else:
