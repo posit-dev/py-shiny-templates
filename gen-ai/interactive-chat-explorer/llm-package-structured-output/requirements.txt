@@ -1,0 +1,5 @@
+shiny
+openai
+dotenv
+llm
+pydantic

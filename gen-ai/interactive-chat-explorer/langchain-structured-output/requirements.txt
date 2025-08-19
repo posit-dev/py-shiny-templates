@@ -1,0 +1,6 @@
+shiny
+langchain-core
+langchain-openai
+pydantic
+dotenv
+langchain

@@ -1,0 +1,16 @@
+{
+  "type": "app",
+  "id": "langchain-structured-output-chat",
+  "title": "LangChain Chat with Structured Output",
+  "description": "Shows how to constrain model responses to a structured schema using LangChain (e.g., pydantic or JSON mode).",
+  "next_steps": [
+    "Put your OPENAI or ANTHROPIC API key in the template.env file and rename it to .env.",
+    "Run the app with shiny run app-express.py."
+  ],
+  "follow_up": [
+    { "type": "info", "text": "Need help obtaining an API key?" },
+    { "type": "action", "text": "Visit https://platform.openai.com/api-keys" },
+    { "type": "info", "text": "Learn about structured outputs in LangChain" },
+    { "type": "action", "text": "See https://python.langchain.com/docs/how_to/structured_output" }
+  ]
+}

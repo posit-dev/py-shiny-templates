@@ -1,0 +1,5 @@
+shiny
+langchain-core
+langchain-openai
+dotenv
+langchain

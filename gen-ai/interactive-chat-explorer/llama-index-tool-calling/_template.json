@@ -1,0 +1,16 @@
+{
+  "type": "app",
+  "id": "llama-index-tool-calling-chat",
+  "title": "Tool Calling with LlamaIndex",
+  "description": "Demonstrates model-invoked tool (function) calls orchestrated by LlamaIndex.",
+  "next_steps": [
+    "Add your OPENAI API key into template.env and rename it to .env.",
+    "Run the app with shiny run app-express.py."
+  ],
+  "follow_up": [
+    { "type": "info", "text": "Need an API key?" },
+    { "type": "action", "text": "Visit https://platform.openai.com/api-keys" },
+    { "type": "info", "text": "Explore LlamaIndex tools" },
+    { "type": "action", "text": "https://docs.llamaindex.ai" }
+  ]
+}

@@ -1,0 +1,14 @@
+{
+  "type": "app",
+  "id": "llm-package-structured-output-chat",
+  "title": "Structured Output with llm_package",
+  "description": "Shows enforcing structured schema in responses using llm_package utilities.",
+  "next_steps": [
+    "Add your API key(s) into template.env and rename it to .env.",
+    "Run the app with shiny run app-express.py."
+  ],
+  "follow_up": [
+    { "type": "info", "text": "Need an API key?" },
+    { "type": "action", "text": "https://platform.openai.com/api-keys" }
+  ]
+}
