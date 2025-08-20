@@ -1,8 +1,8 @@
 {
   "type": "app",
-  "id": "llm-package-basic-chat",
-  "title": "Basic Chat using llm_package",
-  "description": "Simple chat illustrating a direct conversation loop with llm_package abstractions.",
+  "id": "llm-package-basic",
+  "title": "Basic Chat using llm package",
+  "description": "Simple chat illustrating a direct conversation loop with llm package abstractions.",
   "next_steps": [
     "Add your API key(s) into template.env and rename it to .env.",
     "Run the app with shiny run app-express.py."

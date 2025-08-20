@@ -1,6 +1,6 @@
 {
   "type": "app",
-  "id": "pydantic-ai-basic-chat",
+  "id": "pydantic-ai-basic",
   "title": "Basic Chat with Pydantic-AI",
   "description": "Simple chat using Pydantic models for validated inputs/outputs.",
   "next_steps": [

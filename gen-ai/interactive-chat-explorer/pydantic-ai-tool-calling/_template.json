@@ -1,6 +1,6 @@
 {
   "type": "app",
-  "id": "pydantic-ai-tool-calling-chat",
+  "id": "pydantic-ai-tool-calling",
   "title": "Tool Calling with Pydantic-AI",
   "description": "Demonstrates invoking and validating tool calls with Pydantic-AI patterns.",
   "next_steps": [

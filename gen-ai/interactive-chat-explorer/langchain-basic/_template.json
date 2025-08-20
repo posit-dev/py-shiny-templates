@@ -1,6 +1,6 @@
 {
   "type": "app",
-  "id": "langchain-basic-chat",
+  "id": "langchain-basic",
   "title": "A Chat app leveraging LangChain framework",
   "description": "This app allows users to interact with a language model using the LangChain framework.",
   "next_steps": [

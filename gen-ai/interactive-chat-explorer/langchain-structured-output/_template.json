@@ -1,6 +1,6 @@
 {
   "type": "app",
-  "id": "langchain-structured-output-chat",
+  "id": "langchain-structured-output",
   "title": "LangChain Chat with Structured Output",
   "description": "Shows how to constrain model responses to a structured schema using LangChain (e.g., pydantic or JSON mode).",
   "next_steps": [

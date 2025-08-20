@@ -1,6 +1,6 @@
 {
   "type": "app",
-  "id": "llama-index-basic-chat",
+  "id": "llama-index-basic",
   "title": "Basic Chat with LlamaIndex",
   "description": "Minimal LlamaIndex-powered chat demonstrating a direct LLM conversation loop.",
   "next_steps": [
