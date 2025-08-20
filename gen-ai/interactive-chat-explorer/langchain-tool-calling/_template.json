@@ -1,6 +1,6 @@
 {
   "type": "app",
-  "id": "langchain-tool-calling-chat",
+  "id": "langchain-tool-calling",
   "title": "LangChain Chat with Tool Calling",
   "description": "Demonstrates using LangChain to enable the model to select and invoke tools/functions during a chat session.",
   "next_steps": [

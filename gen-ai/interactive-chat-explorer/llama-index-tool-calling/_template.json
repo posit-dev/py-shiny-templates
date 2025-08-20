@@ -1,6 +1,6 @@
 {
   "type": "app",
-  "id": "llama-index-tool-calling-chat",
+  "id": "llama-index-tool-calling",
   "title": "Tool Calling with LlamaIndex",
   "description": "Demonstrates model-invoked tool (function) calls orchestrated by LlamaIndex.",
   "next_steps": [

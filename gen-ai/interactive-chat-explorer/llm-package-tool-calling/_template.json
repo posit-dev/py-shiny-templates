@@ -1,8 +1,8 @@
 {
   "type": "app",
-  "id": "llm-package-tool-calling-chat",
-  "title": "Tool Calling with llm_package",
-  "description": "Demonstrates dispatching tool/function calls via llm_package orchestration.",
+  "id": "llm-package-tool-calling",
+  "title": "Tool Calling with llm package",
+  "description": "Demonstrates dispatching tool/function calls via llm package orchestration.",
   "next_steps": [
     "Add your API key(s) into template.env and rename it to .env.",
     "Run the app with shiny run app-express.py."

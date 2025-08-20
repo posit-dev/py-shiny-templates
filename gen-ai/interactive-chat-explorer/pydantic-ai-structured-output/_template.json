@@ -1,6 +1,6 @@
 {
   "type": "app",
-  "id": "pydantic-ai-structured-output-chat",
+  "id": "pydantic-ai-structured-output",
   "title": "Structured Output with Pydantic-AI",
   "description": "Uses Pydantic models to shape and validate structured responses from the model.",
   "next_steps": [

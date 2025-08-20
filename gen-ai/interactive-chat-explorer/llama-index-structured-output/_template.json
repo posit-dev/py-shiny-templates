@@ -1,6 +1,6 @@
 {
   "type": "app",
-  "id": "llama-index-structured-output-chat",
+  "id": "llama-index-structured-output",
   "title": "Structured Output with LlamaIndex",
   "description": "Chat example producing structured (JSON / schema) responses using LlamaIndex tools.",
   "next_steps": [
