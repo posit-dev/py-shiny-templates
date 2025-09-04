@@ -55,7 +55,9 @@ with ui.card():
 
     @render_widget
     def map():
-        return L.Map(zoom=4, center=(0, 0))
+        m = L.Map(zoom=4, center=(0, 0))
+        m.add_layer(L.basemap_to_tiles(BASEMAPS[input.basemap()]))
+        return m
 
 
 # Reactive values to store location information
@@ -175,7 +177,7 @@ def update_basemap(map: L.Map, basemap: str):
     for layer in map.layers:
         if isinstance(layer, L.TileLayer):
             map.remove_layer(layer)
-    map.add_layer(L.basemap_to_tiles(BASEMAPS[input.basemap()]))
+    map.add_layer(L.basemap_to_tiles(BASEMAPS[basemap]))
 
 
 def remove_layer(map: L.Map, name: str):

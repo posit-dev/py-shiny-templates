@@ -118,7 +118,9 @@ def server(input, output, session):
     # via reactive side-effects
     @render_widget
     def map():
-        return L.Map(zoom=4, center=(0, 0))
+        m = L.Map(zoom=4, center=(0, 0))
+        m.add_layer(L.basemap_to_tiles(BASEMAPS[input.basemap()]))
+        return m
 
     # Add marker for first location
     @reactive.effect
@@ -183,7 +185,7 @@ def server(input, output, session):
         for layer in map.layers:
             if isinstance(layer, L.TileLayer):
                 map.remove_layer(layer)
-        map.add_layer(L.basemap_to_tiles(BASEMAPS[input.basemap()]))
+        map.add_layer(L.basemap_to_tiles(BASEMAPS[basemap]))
 
     def remove_layer(map: L.Map, name: str):
         for layer in map.layers:
