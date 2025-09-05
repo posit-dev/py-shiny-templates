@@ -32,7 +32,7 @@ with ui.layout_column_wrap(fill=False):
             return f"{circle.kilometers.__round__(1)} km"
 
     with ui.value_box(showcase=icon_svg("ruler"), theme="gradient-blue-indigo"):
-        "Geodisic Distance"
+        "Geodesic Distance"
 
         @render.text
         def geo_dist():

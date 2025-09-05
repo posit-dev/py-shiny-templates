@@ -29,7 +29,7 @@ app_ui = ui.page_sidebar(
             showcase=icon_svg("globe"),
         ),
         ui.value_box(
-            "Geodisic Distance",
+            "Geodesic Distance",
             ui.output_text("geo_dist"),
             theme="gradient-blue-indigo",
             showcase=icon_svg("ruler"),
