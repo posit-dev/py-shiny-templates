@@ -24,7 +24,6 @@ app_ui = ui.page_navbar(
             ui.card_header("Training Scores"),
             ui.output_plot("score_dist"),
         ),
-        {"class": "bslib-page-dashboard"},
     ),
     ui.nav_panel(
         "View Data",
@@ -36,7 +35,6 @@ app_ui = ui.page_navbar(
             fill=False,
         ),
         ui.card(ui.output_data_frame("data")),
-        {"class": "bslib-page-dashboard"},
     ),
     sidebar=ui.sidebar(
         ui.input_select(
