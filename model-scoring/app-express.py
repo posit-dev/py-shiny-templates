@@ -16,9 +16,12 @@ def dat():
 
 ui.page_opts(title="Model scoring dashboard", fillable=True)
 
+ui.nav_spacer()
 
 with ui.nav_panel("Training Dashboard"):
-    with ui.navset_card_underline():
+    with ui.navset_card_underline(
+        title="Model Metrics",
+    ):
         with ui.nav_panel("ROC Curve"):
 
             @render.plot
