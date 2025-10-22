@@ -1,5 +1,6 @@
 import faicons as fa
 import plotly.express as px
+import polars as pl
 
 # Load data and compute static values
 from shared import app_dir, tips
@@ -7,8 +8,11 @@ from shiny import reactive, render
 from shiny.express import input, ui
 from shinywidgets import render_plotly
 
-bill_rng = (min(tips.total_bill), max(tips.total_bill))
-
+# Collect once for initial bill range
+bill_rng = (
+    tips.select("total_bill").min().collect().item(),
+    tips.select("total_bill").max().collect().item(),
+)
 # Add page title and sidebar
 ui.page_opts(title="Restaurant tipping", fillable=True)
 
@@ -44,27 +48,35 @@ with ui.layout_columns(fill=False):
 
         @render.express
         def total_tippers():
-            tips_data().shape[0]
+            tips_data().select(pl.len()).collect().item()
 
     with ui.value_box(showcase=ICONS["wallet"]):
         "Average tip"
 
         @render.express
         def average_tip():
-            d = tips_data()
+            d = (
+                tips_data()
+                .select(
+                    (pl.col("tip") / pl.col("total_bill")).mean().alias("avg_tip_pct")
+                )
+                .collect()
+            )
             if d.shape[0] > 0:
-                perc = d.tip / d.total_bill
-                f"{perc.mean():.1%}"
+                f"{d.select('avg_tip_pct').item():.1%}"
 
     with ui.value_box(showcase=ICONS["currency-dollar"]):
         "Average bill"
 
         @render.express
         def average_bill():
-            d = tips_data()
+            d = (
+                tips_data()
+                .select(pl.col("total_bill").mean().alias("avg_bill"))
+                .collect()
+            )
             if d.shape[0] > 0:
-                bill = d.total_bill.mean()
-                f"${bill:.2f}"
+                f"${d.select('avg_bill').item():.2f}"
 
 
 with ui.layout_columns(col_widths=[6, 6, 12]):
@@ -73,7 +85,7 @@ with ui.layout_columns(col_widths=[6, 6, 12]):
 
         @render.data_frame
         def table():
-            return render.DataGrid(tips_data())
+            return render.DataGrid(tips_data().collect())
 
     with ui.card(full_screen=True):
         with ui.card_header(class_="d-flex justify-content-between align-items-center"):
@@ -91,7 +103,7 @@ with ui.layout_columns(col_widths=[6, 6, 12]):
         def scatterplot():
             color = input.scatter_color()
             return px.scatter(
-                tips_data(),
+                tips_data().collect(),
                 x="total_bill",
                 y="tip",
                 color=None if color == "none" else color,
@@ -115,16 +127,22 @@ with ui.layout_columns(col_widths=[6, 6, 12]):
         def tip_perc():
             from ridgeplot import ridgeplot
 
-            dat = tips_data()
-            dat["percent"] = dat.tip / dat.total_bill
-            yvar = input.tip_perc_y()
-            uvals = dat[yvar].unique()
-
-            samples = [[dat.percent[dat[yvar] == val]] for val in uvals]
+            dat = (
+                tips_data()
+                .with_columns((pl.col("tip") / pl.col("total_bill")).alias("percent"))
+                .unique()
+                .filter(pl.col("day").is_in(input.tip_perc_y()))
+                .group_by("day")
+                .agg(pl.col("percent").alias("grouped_percent"))
+                .sort(pl.col("day").cast(pl.Enum(["Sun", "Sat", "Thur", "Fri"])))
+                .collect()
+            )
+            samples = dat.select("grouped_percent").to_series().to_list()
+            labels = dat.select("day").to_series().to_list()
 
             plt = ridgeplot(
                 samples=samples,
-                labels=uvals,
+                labels=labels,
                 bandwidth=0.01,
                 colorscale="viridis",
                 colormode="row-index",
@@ -149,9 +167,11 @@ ui.include_css(app_dir / "styles.css")
 @reactive.calc
 def tips_data():
     bill = input.total_bill()
-    idx1 = tips.total_bill.between(bill[0], bill[1])
-    idx2 = tips.time.isin(input.time())
-    return tips[idx1 & idx2]
+    filtered = tips.filter(
+        pl.col("total_bill").is_between(bill[0], bill[1]),
+        pl.col("time").is_in(input.time()),
+    )
+    return filtered
 
 
 @reactive.effect

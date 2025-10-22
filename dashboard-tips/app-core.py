@@ -109,9 +109,11 @@ def server(input, output, session):
     @reactive.calc
     def tips_data():
         bill = input.total_bill()
-        idx1 = tips.filter(pl.col("total_bill").is_between(bill[0], bill[1]))
-        idx2 = idx1.filter(pl.col("time").is_in(input.time()))
-        return idx2
+        filtered = tips.filter(
+            pl.col("total_bill").is_between(bill[0], bill[1]),
+            pl.col("time").is_in(input.time()),
+        )
+        return filtered
 
     @render.ui
     def total_tippers():
