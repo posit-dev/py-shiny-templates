@@ -2,5 +2,5 @@ faicons
 shiny
 shinywidgets
 plotly
-pandas
+polars
 ridgeplot

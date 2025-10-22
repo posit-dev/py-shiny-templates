@@ -61,9 +61,13 @@ with ui.layout_columns(fill=False):
                     (pl.col("tip") / pl.col("total_bill")).mean().alias("avg_tip_pct")
                 )
                 .collect()
+                .select("avg_tip_pct")
+                .item()
             )
-            if d.shape[0] > 0:
-                f"{d.select('avg_tip_pct').item():.1%}"
+            if d:
+                f"{d:.1%}"
+            else:
+                "N/A"
 
     with ui.value_box(showcase=ICONS["currency-dollar"]):
         "Average bill"
@@ -74,9 +78,13 @@ with ui.layout_columns(fill=False):
                 tips_data()
                 .select(pl.col("total_bill").mean().alias("avg_bill"))
                 .collect()
+                .select("avg_bill")
+                .item()
             )
-            if d.shape[0] > 0:
-                f"${d.select('avg_bill').item():.2f}"
+            if d:
+                f"${d:.2f}"
+            else:
+                "N/A"
 
 
 with ui.layout_columns(col_widths=[6, 6, 12]):

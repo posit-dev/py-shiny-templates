@@ -125,15 +125,27 @@ def server(input, output, session):
             tips_data()
             .select((pl.col("tip") / pl.col("total_bill")).mean().alias("avg_tip_pct"))
             .collect()
+            .select("avg_tip_pct")
+            .item()
         )
-        if d.shape[0] > 0:
-            return f"{d.select('avg_tip_pct').item():.1%}"
+        if d:
+            return f"{d:.1%}"
+        else:
+            return "N/A"
 
     @render.ui
     def average_bill():
-        d = tips_data().select(pl.col("total_bill").mean().alias("avg_bill")).collect()
-        if d.shape[0] > 0:
-            return f"${d.select('avg_bill').item():.2f}"
+        d = (
+            tips_data()
+            .select(pl.col("total_bill").mean().alias("avg_bill"))
+            .collect()
+            .select("avg_bill")
+            .item()
+        )
+        if d:
+            return f"${d:.2f}"
+        else:
+            return "N/A"
 
     @render.data_frame
     def table():
