@@ -1,13 +1,17 @@
 import faicons as fa
 import plotly.express as px
+import polars as pl
 
 # Load data and compute static values
 from shared import app_dir, tips
 from shiny import App, reactive, render, ui
 from shinywidgets import output_widget, render_plotly
 
-bill_rng = (min(tips.total_bill), max(tips.total_bill))
-
+# Collect once for initial bill range
+bill_rng = (
+    tips.select("total_bill").min().collect().item(),
+    tips.select("total_bill").max().collect().item(),
+)
 
 ICONS = {
     "user": fa.icon_svg("user", "regular"),
@@ -105,37 +109,39 @@ def server(input, output, session):
     @reactive.calc
     def tips_data():
         bill = input.total_bill()
-        idx1 = tips.total_bill.between(bill[0], bill[1])
-        idx2 = tips.time.isin(input.time())
-        return tips[idx1 & idx2]
+        idx1 = tips.filter(pl.col("total_bill").is_between(bill[0], bill[1]))
+        idx2 = idx1.filter(pl.col("time").is_in(input.time()))
+        return idx2
 
     @render.ui
     def total_tippers():
-        return tips_data().shape[0]
+        return tips_data().select(pl.len()).collect().item()
 
     @render.ui
     def average_tip():
-        d = tips_data()
+        d = (
+            tips_data()
+            .select((pl.col("tip") / pl.col("total_bill")).mean().alias("avg_tip_pct"))
+            .collect()
+        )
         if d.shape[0] > 0:
-            perc = d.tip / d.total_bill
-            return f"{perc.mean():.1%}"
+            return f"{d.select('avg_tip_pct').item():.1%}"
 
     @render.ui
     def average_bill():
-        d = tips_data()
+        d = tips_data().select(pl.col("total_bill").mean().alias("avg_bill")).collect()
         if d.shape[0] > 0:
-            bill = d.total_bill.mean()
-            return f"${bill:.2f}"
+            return f"${d.select('avg_bill').item():.2f}"
 
     @render.data_frame
     def table():
-        return render.DataGrid(tips_data())
+        return render.DataGrid(tips_data().collect())
 
     @render_plotly
     def scatterplot():
         color = input.scatter_color()
         return px.scatter(
-            tips_data(),
+            tips_data().collect(),
             x="total_bill",
             y="tip",
             color=None if color == "none" else color,
@@ -146,16 +152,22 @@ def server(input, output, session):
     def tip_perc():
         from ridgeplot import ridgeplot
 
-        dat = tips_data()
-        dat["percent"] = dat.tip / dat.total_bill
-        yvar = input.tip_perc_y()
-        uvals = dat[yvar].unique()
-
-        samples = [[dat.percent[dat[yvar] == val]] for val in uvals]
+        dat = (
+            tips_data()
+            .with_columns((pl.col("tip") / pl.col("total_bill")).alias("percent"))
+            .unique()
+            .filter(pl.col("day").is_in(input.tip_perc_y()))
+            .group_by("day")
+            .agg(pl.col("percent").alias("grouped_percent"))
+            .sort(pl.col("day").cast(pl.Enum(["Sun", "Sat", "Thur", "Fri"])))
+            .collect()
+        )
+        samples = dat.select("grouped_percent").to_series().to_list()
+        labels = dat.select("day").to_series().to_list()
 
         plt = ridgeplot(
             samples=samples,
-            labels=uvals,
+            labels=labels,
             bandwidth=0.01,
             colorscale="viridis",
             colormode="row-index",

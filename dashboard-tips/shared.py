@@ -1,6 +1,6 @@
 from pathlib import Path
 
-import pandas as pd
+import polars as pl
 
 app_dir = Path(__file__).parent
-tips = pd.read_csv(app_dir / "tips.csv")
+tips = pl.scan_csv(app_dir / "tips.csv")
