@@ -2,16 +2,14 @@ from pathlib import Path
 
 import polars as pl
 from plots import plot_auc_curve, plot_precision_recall_curve, plot_score_distribution
+from shared import scores
 from shiny import reactive, render
 from shiny.express import input, ui
-
-app_dir = Path(__file__).parent
-scores = pl.scan_csv(app_dir / "scores.csv")
 
 
 @reactive.calc()
 def dat():
-    return scores.filter(pl.col("account") == input.account()).collect()
+    return scores.filter(pl.col("account") == input.account())
 
 
 ui.page_opts(title="Model scoring dashboard", fillable=True)
@@ -78,4 +76,5 @@ with ui.sidebar():
             "Mosciski and Sons",
             "Wolff Ltd",
         ],
+    )
     )

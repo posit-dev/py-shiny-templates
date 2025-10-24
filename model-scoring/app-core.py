@@ -2,11 +2,8 @@ from pathlib import Path
 
 import polars as pl
 from plots import plot_auc_curve, plot_precision_recall_curve, plot_score_distribution
+from shared import scores
 from shiny import App, Inputs, reactive, render, ui
-
-app_dir = Path(__file__).parent
-# Use polars to read the CSV; keep as in-memory DataFrame since file is small
-scores = pl.read_csv(app_dir / "scores.csv")
 
 # TODO: borrow some ideas from
 # https://github.com/evidentlyai/evidently
