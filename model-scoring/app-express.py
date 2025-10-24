@@ -77,4 +77,3 @@ with ui.sidebar():
             "Wolff Ltd",
         ],
     )
-    )
