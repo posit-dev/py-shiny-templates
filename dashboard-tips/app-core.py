@@ -7,10 +7,9 @@ from shared import app_dir, tips
 from shiny import App, reactive, render, ui
 from shinywidgets import output_widget, render_plotly
 
-# Collect once for initial bill range
 bill_rng = (
-    tips.select("total_bill").min().collect().item(),
-    tips.select("total_bill").max().collect().item(),
+    tips.select("total_bill").min().item(),
+    tips.select("total_bill").max().item(),
 )
 
 ICONS = {
@@ -117,14 +116,13 @@ def server(input, output, session):
 
     @render.ui
     def total_tippers():
-        return tips_data().select(pl.len()).collect().item()
+        return tips_data().select(pl.len()).item()
 
     @render.ui
     def average_tip():
         d = (
             tips_data()
             .select((pl.col("tip") / pl.col("total_bill")).mean().alias("avg_tip_pct"))
-            .collect()
             .select("avg_tip_pct")
             .item()
         )
@@ -138,7 +136,6 @@ def server(input, output, session):
         d = (
             tips_data()
             .select(pl.col("total_bill").mean().alias("avg_bill"))
-            .collect()
             .select("avg_bill")
             .item()
         )
@@ -149,13 +146,13 @@ def server(input, output, session):
 
     @render.data_frame
     def table():
-        return render.DataGrid(tips_data().collect())
+        return render.DataGrid(tips_data())
 
     @render_plotly
     def scatterplot():
         color = input.scatter_color()
         return px.scatter(
-            tips_data().collect(),
+            tips_data(),
             x="total_bill",
             y="tip",
             color=None if color == "none" else color,
@@ -174,7 +171,6 @@ def server(input, output, session):
             .group_by("day")
             .agg(pl.col("percent").alias("grouped_percent"))
             .sort(pl.col("day").cast(pl.Enum(["Sun", "Sat", "Thur", "Fri"])))
-            .collect()
         )
         samples = dat.select("grouped_percent").to_series().to_list()
         labels = dat.select("day").to_series().to_list()
