@@ -108,24 +108,18 @@ def server(input, output, session):
     @reactive.calc
     def tips_data():
         bill = input.total_bill()
-        filtered = tips.filter(
+        return tips.filter(
             pl.col("total_bill").is_between(bill[0], bill[1]),
             pl.col("time").is_in(input.time()),
         )
-        return filtered
 
     @render.ui
     def total_tippers():
-        return tips_data().select(pl.len()).item()
+        return tips_data().height
 
     @render.ui
     def average_tip():
-        d = (
-            tips_data()
-            .select((pl.col("tip") / pl.col("total_bill")).mean().alias("avg_tip_pct"))
-            .select("avg_tip_pct")
-            .item()
-        )
+        d = tips_data().select((pl.col("tip") / pl.col("total_bill")).mean()).item()
         if d:
             return f"{d:.1%}"
         else:
@@ -133,12 +127,7 @@ def server(input, output, session):
 
     @render.ui
     def average_bill():
-        d = (
-            tips_data()
-            .select(pl.col("total_bill").mean().alias("avg_bill"))
-            .select("avg_bill")
-            .item()
-        )
+        d = tips_data().select(pl.col("total_bill").mean()).item()
         if d:
             return f"${d:.2f}"
         else:
