@@ -1,4 +1,4 @@
-from pandas import DataFrame
+import polars as pl
 from plotnine import (
     aes,
     geom_abline,
@@ -11,7 +11,7 @@ from plotnine import (
 from sklearn.metrics import auc, precision_recall_curve, roc_curve
 
 
-def plot_score_distribution(df: DataFrame):
+def plot_score_distribution(df: pl.DataFrame):
     plot = (
         ggplot(df, aes(x="training_score"))
         + geom_density(fill="blue", alpha=0.3)
@@ -21,11 +21,11 @@ def plot_score_distribution(df: DataFrame):
     return plot
 
 
-def plot_auc_curve(df: DataFrame, true_col: str, pred_col: str):
+def plot_auc_curve(df: pl.DataFrame, true_col: str, pred_col: str):
     fpr, tpr, _ = roc_curve(df[true_col], df[pred_col])
     roc_auc = auc(fpr, tpr)
 
-    roc_df = DataFrame({"fpr": fpr, "tpr": tpr})
+    roc_df = pl.DataFrame({"fpr": fpr, "tpr": tpr})
 
     plot = (
         ggplot(roc_df, aes(x="fpr", y="tpr"))
@@ -43,10 +43,10 @@ def plot_auc_curve(df: DataFrame, true_col: str, pred_col: str):
     return plot
 
 
-def plot_precision_recall_curve(df: DataFrame, true_col: str, pred_col: str):
+def plot_precision_recall_curve(df: pl.DataFrame, true_col: str, pred_col: str):
     precision, recall, _ = precision_recall_curve(df[true_col], df[pred_col])
 
-    pr_df = DataFrame({"precision": precision, "recall": recall})
+    pr_df = pl.DataFrame({"precision": precision, "recall": recall})
 
     plot = (
         ggplot(pr_df, aes(x="recall", y="precision"))

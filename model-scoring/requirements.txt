@@ -1,5 +1,5 @@
-numpy
-pandas
+polars
 plotnine
-scikit-learn>=1.7.0
+scikit-learn
 shiny
+pyarrow

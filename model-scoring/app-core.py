@@ -1,11 +1,9 @@
 from pathlib import Path
 
-import pandas as pd
+import polars as pl
 from plots import plot_auc_curve, plot_precision_recall_curve, plot_score_distribution
+from shared import scores
 from shiny import App, Inputs, reactive, render, ui
-
-app_dir = Path(__file__).parent
-scores = pd.read_csv(app_dir / "scores.csv")
 
 # TODO: borrow some ideas from
 # https://github.com/evidentlyai/evidently
@@ -23,7 +21,6 @@ app_ui = ui.page_navbar(
             ui.card_header("Training Scores"),
             ui.output_plot("score_dist"),
         ),
-        {"class": "bslib-page-dashboard"},
     ),
     ui.nav_panel(
         "View Data",
@@ -35,7 +32,6 @@ app_ui = ui.page_navbar(
             fill=False,
         ),
         ui.card(ui.output_data_frame("data")),
-        {"class": "bslib-page-dashboard"},
     ),
     sidebar=ui.sidebar(
         ui.input_select(
@@ -58,8 +54,8 @@ app_ui = ui.page_navbar(
 
 def server(input: Inputs):
     @reactive.calc()
-    def dat() -> pd.DataFrame:
-        return scores.loc[scores["account"] == input.account()]
+    def dat() -> pl.DataFrame:
+        return scores.filter(pl.col("account") == input.account())
 
     @render.plot
     def score_dist():
