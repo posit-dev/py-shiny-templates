@@ -26,13 +26,11 @@ def wait_for_shiny_initialization(
         )
         page.wait_for_function(init_check, timeout=timeout)
 
-        page.evaluate(
-            """
+        page.evaluate("""
             async () => {
                 return window.Shiny.initializedPromise;
             }
-            """
-        )
+            """)
 
     except Exception as e:
         error_msg = f"Shiny initialization failed or timed out for {page.url}: {str(e)}"

@@ -32,13 +32,11 @@ app_ui = ui.page_sidebar(
         ui.input_action_button(
             "show_meta", "Show Metadata", class_="btn btn-secondary"
         ),
-        ui.markdown(
-            """
+        ui.markdown("""
             This app lets you explore a dataset using SQL and duckdb.
             The data is stored in an on-disk [duckdb](https://duckdb.org/) database,
             which leads to extremely fast queries.
-            """
-        ),
+            """),
     ),
     ui.tags.div(
         query_output_ui("initial_query", remove_id="initial_query"),
