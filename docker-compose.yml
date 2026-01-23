@@ -1,0 +1,10 @@
+
+services:
+  basic-app:
+    build: ./basic-app
+    ports:
+      - "8080:8080"
+  dashboard:
+    build: ./dashboard
+    ports:
+      - "8081:8080"
