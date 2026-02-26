@@ -3,11 +3,6 @@ name: shiny-python-dashboard
 description: Best practices for building dashboards in Shiny for Python, covering both Core and Express APIs. Use when building, reviewing, or refactoring Shiny for Python apps including dashboards, sidebar layouts, multi-page navigation, value boxes, reactive filtering, plotly/seaborn charts, data tables, styled card layouts, faicons icons, and interactive maps. Triggers on shiny for python, shiny dashboard, shiny core vs express, page_sidebar, page_navbar, value_box, navset, nav_panel, reactive calc, render_plotly, render.data_frame, sidebar layout, navigation panels, faicons, icon_svg, ipyleaflet, map.
 ---
 
-# Shiny for Python Dashboard Best Practices
-
-Patterns extracted from production templates: `dashboard-tips`, `nba-dashboard`, `stock-app`,
-`basic-navigation`, `basic-sidebar`, and `map-distance`.
-
 ## Project structure
 
 ```
