@@ -2,17 +2,7 @@ import os
 from datetime import datetime
 
 from dotenv import load_dotenv
-
-try:
-    from langchain_classic.agents import (
-        AgentExecutor,
-        create_openai_tools_agent,
-    )
-except ImportError:
-    from langchain.agents import (
-        AgentExecutor,
-        create_openai_tools_agent,
-    )
+from langchain_classic.agents import AgentExecutor, create_openai_tools_agent
 from langchain_core.chat_history import InMemoryChatMessageHistory
 from langchain_core.prompts import ChatPromptTemplate, MessagesPlaceholder
 from langchain_core.runnables.history import RunnableWithMessageHistory
