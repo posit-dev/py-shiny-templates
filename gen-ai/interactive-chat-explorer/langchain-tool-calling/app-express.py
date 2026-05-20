@@ -2,7 +2,16 @@ import os
 from datetime import datetime
 
 from dotenv import load_dotenv
-from langchain.agents import AgentExecutor, create_openai_tools_agent
+try:
+    from langchain_classic.agents import (
+        AgentExecutor,
+        create_openai_tools_agent,
+    )
+except ImportError:
+    from langchain.agents import (
+        AgentExecutor,
+        create_openai_tools_agent,
+    )
 from langchain_core.chat_history import InMemoryChatMessageHistory
 from langchain_core.prompts import ChatPromptTemplate, MessagesPlaceholder
 from langchain_core.runnables.history import RunnableWithMessageHistory
@@ -28,7 +37,10 @@ def get_current_date() -> str:
 @tool
 def get_current_weather(city: str) -> str:
     """Get the current weather for a given city."""
-    return f"The current weather in {city} is sunny with a temperature of 25\u00b0C."
+    return (
+        f"The current weather in {city} is sunny "
+        "with a temperature of 25°C."
+    )
 
 
 @tool
@@ -88,7 +100,11 @@ chat = ui.Chat(
 chat.ui(
     messages=[
         {
-            "content": "Hello! I'm a chatbot with tools. I can get the time, date, weather, or do calculations. I'll also remember our conversation. How can I help?",
+            "content": (
+                "Hello! I'm a chatbot with tools. I can get the time, date, "
+                "weather, or do calculations. I'll also remember our "
+                "conversation. How can I help?"
+            ),
             "role": "assistant",
         }
     ],

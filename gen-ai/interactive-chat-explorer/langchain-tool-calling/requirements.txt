@@ -3,3 +3,4 @@ langchain-core
 langchain-openai
 dotenv
 langchain
+langchain-classic
