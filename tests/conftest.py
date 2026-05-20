@@ -19,7 +19,8 @@ def load_test_urls() -> List[str]:
     try:
         if not config_path.exists():
             print(
-                f"Warning: Configuration file {config_path} not found. No URLs will be loaded."
+                f"Warning: Configuration file {config_path} not found. "
+                "No URLs will be loaded."
             )
             return urls
         with config_path.open(encoding="utf-8") as f:
@@ -35,7 +36,8 @@ def load_test_urls() -> List[str]:
         print(f"An unexpected error occurred while loading test URLs: {e}")
     if not urls:
         print(
-            "Warning: No URLs were loaded. Ensure deployments.json is correctly formatted and contains URLs."
+            "Warning: No URLs were loaded. Ensure deployments.json "
+            "is correctly formatted and contains URLs."
         )
     return urls
 
