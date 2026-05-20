@@ -2,12 +2,11 @@ import os
 from datetime import datetime
 
 from dotenv import load_dotenv
-from langchain_classic.agents import AgentExecutor, create_openai_tools_agent
-from langchain_core.chat_history import InMemoryChatMessageHistory
-from langchain_core.prompts import ChatPromptTemplate, MessagesPlaceholder
-from langchain_core.runnables.history import RunnableWithMessageHistory
+from langchain.agents import create_agent
+from langchain_core.runnables import RunnableConfig
 from langchain_core.tools import tool
 from langchain_openai import ChatOpenAI
+from langgraph.checkpoint.memory import InMemorySaver
 from shiny.express import ui
 
 _ = load_dotenv()
@@ -28,7 +27,7 @@ def get_current_date() -> str:
 @tool
 def get_current_weather(city: str) -> str:
     """Get the current weather for a given city."""
-    return f"The current weather in {city} is sunny " "with a temperature of 25°C."
+    return f"The current weather in {city} is sunny with a temperature of 25°C."
 
 
 @tool
@@ -39,41 +38,16 @@ def calculator(expression: str) -> str:
 
 tools = [get_current_time, get_current_date, calculator, get_current_weather]
 
-prompt = ChatPromptTemplate.from_messages(
-    [
-        ("system", "You are a helpful assistant"),
-        MessagesPlaceholder("chat_history", optional=True),
-        ("human", "{input}"),
-        MessagesPlaceholder("agent_scratchpad"),
-    ]
-)
-
 llm = ChatOpenAI(
     api_key=os.environ.get("OPENAI_API_KEY"),
     model="gpt-4.1-nano-2025-04-14",
 )
 
-agent = create_openai_tools_agent(llm, tools, prompt)
-agent_executor = AgentExecutor(agent=agent, tools=tools)
-
-store = {}
-
-
-def get_session_history(session_id: str):
-    """
-    Retrieves the chat history for a given session ID.
-    If no history exists, a new one is created.
-    """
-    if session_id not in store:
-        store[session_id] = InMemoryChatMessageHistory()
-    return store[session_id]
-
-
-agent_with_chat_history = RunnableWithMessageHistory(
-    agent_executor,
-    get_session_history,
-    input_messages_key="input",
-    history_messages_key="chat_history",
+agent = create_agent(
+    model=llm,
+    tools=tools,
+    system_prompt="You are a helpful assistant",
+    checkpointer=InMemorySaver(),
 )
 
 ui.page_opts(
@@ -104,16 +78,20 @@ async def handle_user_input(user_input: str):
     """
     Handles user input by streaming the agent's response.
     """
-    config = {"configurable": {"session_id": "shiny_session_tools_1"}}
+    config: RunnableConfig = {"configurable": {"thread_id": "shiny_session_tools_1"}}
 
     async def stream_response():
-        async for event in agent_with_chat_history.astream_events(
-            {"input": user_input}, config=config, version="v1"
+        async for chunk, metadata in agent.astream(
+            {"messages": [{"role": "user", "content": user_input}]},
+            config=config,
+            stream_mode="messages",
         ):
-            kind = event["event"]
-            if kind == "on_chat_model_stream":
-                content = event["data"]["chunk"].content
-                if content:
-                    yield content
+            if not isinstance(metadata, dict):
+                continue
+            if metadata.get("langgraph_node") != "model":
+                continue
+            content = getattr(chunk, "content", None)
+            if content:
+                yield content
 
     await chat.append_message_stream(stream_response())
