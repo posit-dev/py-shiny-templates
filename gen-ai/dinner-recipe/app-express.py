@@ -184,7 +184,7 @@ async def _():
 
 with ui.hold() as download_recipe:
 
-    @render.download(filename="recipe.json", label="Download recipe")
+    @render.download_button(filename="recipe.json", label="Download recipe")
     async def download_handler():
         import json
 

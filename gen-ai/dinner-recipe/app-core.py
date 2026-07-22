@@ -176,7 +176,7 @@ Want to save this recipe? Click the "Save recipe" button below.
             await stream.append("Cooking up a recipe for you!")
             await stream.replace(await recipe_message())
 
-    @render.download(filename="recipe.json")
+    @render.download_button(filename="recipe.json")
     async def download_handler():
         import json
 

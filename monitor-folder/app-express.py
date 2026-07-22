@@ -36,7 +36,7 @@ with ui.layout_columns(col_widths=[4, 8]):
                 ):
                     "Log output"
 
-                    @render.download(filename="logs.csv")
+                    @render.download_link(filename="logs.csv")
                     def download():
                         csv = selected_file()
                         with io.StringIO() as buf:
