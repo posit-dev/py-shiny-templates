@@ -1,4 +1,4 @@
-shiny
+shiny>=1.7.0
 dotenv
 faicons
 chatlas[anthropic]

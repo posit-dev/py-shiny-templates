@@ -73,7 +73,7 @@ def server(input: Inputs, output: Outputs, session: Session):
         id = random.randint(100, 999)
         sampled_logs.to_csv(watch_folder / f"logs-{id}.csv")
 
-    @render.download(filename="logs.csv")
+    @render.download_link(filename="logs.csv")
     def download():
         csv = selected_file()
         with io.StringIO() as buf:

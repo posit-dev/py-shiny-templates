@@ -1,5 +1,5 @@
 shinyswatch
-shiny
+shiny>=1.7.0
 openai
 dotenv
 faicons

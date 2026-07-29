@@ -1,4 +1,4 @@
-shiny 
+shiny>=1.7.0
 pandas
 faicons
 watchfiles

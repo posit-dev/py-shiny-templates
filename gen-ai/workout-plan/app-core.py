@@ -79,7 +79,7 @@ def server(input: Inputs):
         _ = workout_stream.latest_stream.result()
         return ui.download_button("download", "Download Workout")
 
-    @render.download(filename="workout_plan.md", label="Download Workout")
+    @render.download_button(filename="workout_plan.md", label="Download Workout")
     def download():
         yield workout_stream.latest_stream.result()
 

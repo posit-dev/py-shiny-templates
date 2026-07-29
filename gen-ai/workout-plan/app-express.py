@@ -44,7 +44,7 @@ with ui.sidebar(open={"mobile": "always-above"}):
     def download_ui():
         plan = workout_stream.latest_stream.result()
 
-        @render.download(filename="workout_plan.md", label="Download Workout")
+        @render.download_button(filename="workout_plan.md", label="Download Workout")
         def download():
             yield plan
 
