@@ -1,4 +1,4 @@
-shiny @ git+https://github.com/posit-dev/py-shiny.git@main  # TODO: release - revert to PyPI `shiny>=1.7.0` once 1.7.0 is published (py-shiny#2364)
+shiny>=1.7.0
 dotenv
 faicons
 chatlas[anthropic]
