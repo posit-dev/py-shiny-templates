@@ -1,6 +1,6 @@
+from scipy.stats import gaussian_kde
 import numpy as np
 import plotly.express as px
-import plotly.figure_factory as ff
 import plotly.graph_objects as go
 
 color_palette = px.colors.qualitative.D3
@@ -36,22 +36,39 @@ def radar_chart(percs_df, stats_df, stats):
 
 
 def density_plot(careers_df, stats_df, stat, players_dict, on_rug_click):
-    vals = careers_df[stat]
-    vals = vals[~vals.isnull()]
-    fig = ff.create_distplot(
-        [vals],
-        ["Overall"],
-        rug_text=[careers_df["player_name"]],
-        colors=["black"],
-        show_hist=False,
+    vals = careers_df[stat].dropna().to_numpy()
+    kde = gaussian_kde(vals)
+    x_range = np.linspace(vals.min(), vals.max(), 500)
+    y_density = kde(x_range)
+
+    fig = go.Figure()
+    # 1. Density line trace
+    fig.add_trace(
+        go.Scatter(
+            x=x_range,
+            y=y_density,
+            mode="lines",
+            name="Overall",
+            line=dict(color="black"),
+            hoverinfo="none",
+            showlegend=False,
+        )
     )
-    # Clean up some defaults (1st trace is the density plot, 2nd is the rug plot)
-    fig.data[0].hoverinfo = "none"
-    fig.data[0].showlegend = False
-    fig.data[1].hoverinfo = "text+x"
-    fig.data[1].customdata = careers_df["person_id"]
-    # Use height of the density plot to inform the vertical lines
-    ymax = fig.data[0].y.max()
+    # 2. Rug plot trace
+    fig.add_trace(
+        go.Scatter(
+            x=vals,
+            y=[0] * len(vals),
+            mode="markers",
+            marker=dict(symbol="line-ns-open", color="black"),
+            text=careers_df["player_name"],
+            customdata=careers_df["person_id"],
+            hoverinfo="text+x",
+            showlegend=False,
+        )
+    )
+
+    ymax = y_density.max()
     # Arrange rows from highest to lowest value so that legend order is correct
     stats_df = stats_df.sort_values(stat, ascending=False)
     # Add vertical lines for each player
