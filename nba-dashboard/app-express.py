@@ -93,7 +93,7 @@ def _():
 def player_stats():
     players = req(input.players())
     res = careers()
-    res = res[res["person_id"].isin(players)]
+    res = res[res["person_id"].isin(players)].copy()
     res["color"] = np.resize(color_palette, len(players))
     return res
 
