@@ -2,9 +2,5 @@ pandas
 numpy
 nba_api
 plotly
-shinywidgets
+shinywidgets>=0.7.1
 scipy
-
-# websockets 16.0+ breaks anywidget initialization
-# See https://github.com/posit-dev/py-shinywidgets/issues/218
-websockets<16.0
