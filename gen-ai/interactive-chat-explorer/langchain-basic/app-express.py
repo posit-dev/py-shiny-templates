@@ -11,7 +11,7 @@ _ = load_dotenv()
 
 model = ChatOpenAI(
     api_key=os.environ.get("OPENAI_API_KEY"),
-    model="gpt-4.1-nano-2025-04-14",
+    model="gpt-5.6-luna",
 )
 
 prompt = ChatPromptTemplate.from_messages(
