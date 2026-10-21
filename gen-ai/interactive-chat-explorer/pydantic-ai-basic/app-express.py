@@ -8,7 +8,7 @@ from shiny.express import ui
 
 _ = load_dotenv()
 chat_client = Agent(
-    "openai:gpt-4.1-nano-2025-04-14",
+    "openai:gpt-5.6-luna",
     system_prompt="You are a helpful assistant.",
 )
 
