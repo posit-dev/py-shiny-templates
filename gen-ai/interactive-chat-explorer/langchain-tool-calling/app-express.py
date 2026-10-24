@@ -40,7 +40,7 @@ tools = [get_current_time, get_current_date, calculator, get_current_weather]
 
 llm = ChatOpenAI(
     api_key=os.environ.get("OPENAI_API_KEY"),
-    model="gpt-4.1-nano-2025-04-14",
+    model="gpt-5.6-luna",
 )
 
 agent = create_agent(
