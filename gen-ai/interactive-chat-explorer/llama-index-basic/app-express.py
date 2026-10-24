@@ -7,7 +7,7 @@ from shiny.express import ui
 _ = load_dotenv()
 
 llm = OpenAI(
-    model="gpt-4.1-nano-2025-04-14",
+    model="gpt-5.6-luna",
 )
 
 ui.page_opts(

@@ -24,7 +24,7 @@ class AnalysisResponse(BaseModel):
 
 _ = AnalysisResponse.model_rebuild()
 
-llm = OpenAI(model="gpt-4.1-nano-2025-04-14")
+llm = OpenAI(model="gpt-5.6-luna")
 
 ui.page_opts(
     title="Shiny Chat - Structured Analysis using llama-index",
